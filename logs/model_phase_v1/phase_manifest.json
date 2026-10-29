@@ -1,0 +1,40 @@
+{
+  "phase": "model_training_and_evaluation_v1",
+  "created_utc": "2026-10-13T21:56:19+00:00",
+  "label_status": "AI-generated working labels, not human-verified",
+  "frontend_changed": false,
+  "code_and_report_sha256": {
+    "scripts/build_ai_working_labels_v1.py": "d2a7ad9d85013f74adaa84fd79de0b3c13be949c209f18fd145ec9dd825c2094",
+    "scripts/train_stance_ai_labels_v2.py": "296343c73a31a17e0d0ddf486272a4e0056fb6f84a316ebb07a645a07ec0b83d",
+    "scripts/run_sentiment_domain_check_v1.py": "b6598a498620c77d2d48b15dbc5fdec768c3db081ccbc0253e71cd2c478b8766",
+    "scripts/train_sentiment_ai_labels_v1.py": "1a7d41deb398551611ac634655feb88f72dab29b32761c3f54c34f4202b999de",
+    "scripts/run_concern_audit_v1.py": "66883ab7b73193b3de371b0e4ab3782387942cabd5ec410cc8d0bdb53bcbd7d4",
+    "scripts/run_prioritization_audit_v1.py": "42fd576603017f07f730dbba91f8b6bbd4bf550b2c8cb990c42236fcf5674cf2",
+    "scripts/run_new_comment_inference_v1.py": "1955b641aa1fedf5f9e25abb59743daa14ac1885d90c86ee2ef8417999a76233",
+    "models/new_comment_inference.py": "a76d2c975f965d57444abf94b6a639b6da4898c1020e48b6c75768d97084d6be",
+    "tests/test_model_phase_v1.py": "a7d1df2fc9783972bf1f146c2d16ae6ce4e6d5c0755eea88862d9a936bf35192",
+    "reports/model_phase_v1_report.md": "06efb716c6bc9dd3f6112f0d8e574688b6b04b36e99a3cc90884c2e5e4b2e984"
+  },
+  "output_manifests_sha256": {
+    "data/ai_labels/stance_sentiment_ai_v1/manifest.json": "a1eaf69ffa10afb2ceef428460e6fadb050cc656211b6fbb7fad6f710be1218a",
+    "data/stance_training_ai_working_labels/run_pool400_ai_v1_3class/metadata.json": "1ba257f43e1987a8aba74ce13928e442cd783c0886b5c3f131d469129abba79e",
+    "data/stance_training_ai_working_labels/run_pool400_ai_v1_support_vs_neutral/metadata.json": "c19fa7b609053b0e48bbb601f6e98fc9c7ada7a5fee43560af3dc7b5529c1b96",
+    "data/sentiment_evaluation/consultation_domain_check_v1/manifest.json": "c1bee17c8689fbe6fa55ed1294b5364b620e407c77a3736fcb93e4f6e577fe57",
+    "data/sentiment_training/consultation_ai_labels_tfidf_v1/metadata.json": "ca5823d71ed62a555618de99062624bbcb37d757532efee9a3d5d8ab4c1ef0fb",
+    "data/full_corpus/concern_audit_v1/manifest.json": "ce166a1fb7ef5c962a8c5d4565c23cbb0624bdb77154afe2453b712f06b55bcb",
+    "data/full_corpus/experiments_field_centered_v1/manifest.json": "e75fd080c405a1d0b3cd88c80890d361c3f494807842c22988659cb5cb8338fc",
+    "data/full_corpus/prioritization_audit_v1/manifest.json": "db8fd125fbd9eb569dd3a36f7a7a81e6143bf42d0156b2c433b8e23eb83c895b",
+    "data/inference/new_comment_inference_v1/manifest.json": "83c930cb5da20ffa15a0abd1556cb12e1bcebeba3835b6e537c85b4e3ba0820c"
+  },
+  "logs_sha256": {
+    "logs/model_phase_v1/concern_audit.log": "4edf06933c68ee2fc0a5e0aa875fc0ff096730e97fe8dacd69895ece976ed7c5",
+    "logs/model_phase_v1/full_test_suite.log": "4d6f69a9919c1c75010876ab39d1a687387ee0e1171b80947b9f08ffec70a618",
+    "logs/model_phase_v1/inference_smoke.log": "492082865055fd15292913d6d6ac9ddc2c9fb646d30dde6674abe8f67c37a57d",
+    "logs/model_phase_v1/prioritization_audit.log": "648372cf118ef95fa8dd489b09a09e2563a4c59fd633a7ca779159052b8c313b",
+    "logs/model_phase_v1/research_evaluation_nowrite.log": "7d138f202b5f9ed6b7ef0e2f4ce0c69098b738c1f89dbb3d47afb9c63b5597c8",
+    "logs/model_phase_v1/sentiment_ai_labels.log": "073cca72d384b5bafb2d2acfeb0a20a37bff480ded5772fc612925a5c23a6723",
+    "logs/model_phase_v1/sentiment_domain_check.log": "413ffdb9ac1e9dff5c107ce6800a1ad6d7d2770b666e5d621b24c7ce1c9ee8a8",
+    "logs/model_phase_v1/stance_2class.log": "145f6922d5c77782516de626a783a1c342424b515547222236f6fba4e9034a4a",
+    "logs/model_phase_v1/stance_3class.log": "c3cc2c3914d6c9a6f97f09b5ed19dedd2beec017b7abff5b0f7f132a51d880cb"
+  }
+}

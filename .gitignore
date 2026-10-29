@@ -1,0 +1,57 @@
+﻿.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+dist/
+build/
+__MACOSX/
+.DS_Store
+*.log
+*.pyc
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.joblib
+*.pkl
+artifacts/
+outputs/
+checkpoints/
+
+# Datasets
+data/
+indian/
+trainingandtestdata/
+
+# Generated artifacts
+models/
+*.csv
+*.parquet
+*.npy
+
+# Python environment
+.venv/
+__pycache__/
+.pytest_cache/
+
+
+# Dataset files and downloaded corpora
+data/
+indian/
+trainingandtestdata/
+SentiMix-Hindi-English-main/
+hinemo9-v1.0.1/
+*.csv
+*.parquet
+*.npy
+*.zip
+
+
+git_status.txt

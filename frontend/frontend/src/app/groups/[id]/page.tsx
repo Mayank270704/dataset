@@ -1,0 +1,11 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api, type Envelope, type Group } from "@/lib/api";
+type Detail = Group & { evidence: { corpus_id: number; source_dataset: string; source_record_id: string; quote: string; language: string }[]; summary_method?: string; not_summarised_reason?: string | null };
+export default function GroupDetail({ params }: { params: Promise<{ id: string }> }) {
+  const [id, setId] = useState(""); const [group, setGroup] = useState<Envelope<Detail> | null>(null); const [error, setError] = useState("");
+  useEffect(() => { params.then(p => setId(p.id)); }, [params]);
+  useEffect(() => { if (id) api<Envelope<Detail>>(`/api/groups/${encodeURIComponent(id)}`).then(setGroup).catch(e => setError(e.message)); }, [id]);
+  return <main className="mx-auto max-w-4xl px-5 py-9 pb-24"><Link href="/groups" className="text-sm text-blue-800">← All groups</Link>{error && <p role="alert" className="mt-5 text-red-700">{error}</p>}{!group && !error && <p className="mt-5">Loading group…</p>}{group && <><h1 className="mt-4 text-3xl font-bold">{group.data.short_label || `Group ${group.data.cluster_id}`}</h1><p className="mt-2 text-sm text-slate-600">Group {group.data.cluster_id} · {group.data.tier} · {group.data.entries.toLocaleString()} entries · {group.data.independent_texts.toLocaleString()} independent texts</p><div className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-950">Extractive, exploratory description; not a generated collective demand and not human validated.</div><p className="mt-5 text-sm leading-6">{group.data.description}</p><h2 className="mt-8 text-xl font-semibold">Representative source evidence</h2><div className="mt-3 space-y-3">{group.data.evidence.map((e, i) => <article key={`${e.corpus_id}-${i}`} className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm leading-6">{e.quote}</p><p className="mt-3 border-t pt-2 text-xs text-slate-500">{e.language} · corpus {e.corpus_id} · {e.source_dataset} · source record {e.source_record_id}</p></article>)}</div>{!group.data.evidence.length && <p className="mt-3 text-sm text-slate-500">No representative comments are available.</p>}</>}</main>;
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "section": "1. Protected artifact integrity",
+    "name": "protected files unchanged",
+    "status": "PASSED",
+    "detail": "49 recorded files match the baseline"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "artifacts_exist",
+    "status": "PASSED",
+    "detail": "pool, ledger, manifest and pilot present"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "manifest_output_hashes",
+    "status": "PASSED",
+    "detail": "pool and ledger SHA-256 match the manifest"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "manifest_input_hashes",
+    "status": "PASSED",
+    "detail": "pilot and source_clean inputs unchanged since the build"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "row_counts",
+    "status": "PASSED",
+    "detail": "pool=400, ledger=11031, manifest pool=400, ledger=11031"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "pilot_rows_verbatim_and_first",
+    "status": "PASSED",
+    "detail": "first 50 rows equal the pilot file; 2 appended columns"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "segments_labelled_by_id",
+    "status": "PASSED",
+    "detail": "rows 1-50 are pilot_*, remaining are expansion_v2_*"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "annotation_columns_blank",
+    "status": "PASSED",
+    "detail": "non-blank annotation cells: 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "source_record_uniqueness",
+    "status": "PASSED",
+    "detail": "repeated (source_dataset, source_row_number): 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "no_pilot_record_overlap",
+    "status": "PASSED",
+    "detail": "new rows sharing a pilot source record: 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "exact_text_duplicate_policy",
+    "status": "PASSED",
+    "detail": "repeated normalised texts in pool: 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "duplicate_group_unique",
+    "status": "PASSED",
+    "detail": "non-blank duplicate_text_group_id appears at most once (an identical-text key, not a respondent ID)"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "source_text_provenance_verbatim",
+    "status": "PASSED",
+    "detail": "rows not matching source cell (trimmed): 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "eligibility_rules",
+    "status": "PASSED",
+    "detail": "rows violating length/filler/exclusion rules: 0"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "ledger_completeness",
+    "status": "PASSED",
+    "detail": "ledger=11031 vs non-blank designed cells=11031; selected=350"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "language_metadata",
+    "status": "PASSED",
+    "detail": "values=['English', 'French']; questionnaire basis states survey language: True"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "language_scope_exclusions_ledgered",
+    "status": "PASSED",
+    "detail": "out-of-scope entries ledgered: 3"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "dataset_quotas",
+    "status": "PASSED",
+    "detail": "achieved={'consultation_compilation_2017_18': 160, 'get_involved_questionnaire_2017_18': 120, 'individual_comments_2016_18': 70}; quotas={'individual_comments_2016_18': 70, 'consultation_compilation_2017_18': 160, 'get_involved_questionnaire_2017_18': 120}"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "stratum_allocation_matches_manifest",
+    "status": "PASSED",
+    "detail": "individual_comments_2016_18: ok; get_involved_questionnaire_2017_18: ok; compilation themes: ok"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "allocation_shortfall_events",
+    "status": "PASSED",
+    "detail": "no shortfall/redistribution events"
+  },
+  {
+    "section": "2. Expansion pool v2 verification",
+    "name": "annotator_templates_match_pool",
+    "status": "PASSED",
+    "detail": "2/2 templates present; each equals the pool (header, rows, blank labels)"
+  },
+  {
+    "section": "3. Existing 450-comment baseline (UNSUPERVISED, not human-validated)",
+    "name": "artifacts match the 44-pair review fingerprints",
+    "status": "PASSED",
+    "detail": "6 embedding/cluster/report fingerprints match"
+  },
+  {
+    "section": "3. Existing 450-comment baseline (UNSUPERVISED, not human-validated)",
+    "name": "stored comparison: all_minilm_l6_v2",
+    "status": "PASSED",
+    "detail": "clusters=2, noise_fraction=0.0, silhouette=0.5956 (geometric descriptor; not concern validity)"
+  },
+  {
+    "section": "3. Existing 450-comment baseline (UNSUPERVISED, not human-validated)",
+    "name": "stored comparison: paraphrase_multilingual_minilm_l12_v2",
+    "status": "PASSED",
+    "detail": "clusters=6, noise_fraction=0.0867, silhouette=0.2942 (geometric descriptor; not concern validity)"
+  },
+  {
+    "section": "3. Existing 450-comment baseline (UNSUPERVISED, not human-validated)",
+    "name": "interpretation",
+    "status": "PASSED",
+    "detail": "Cluster count, silhouette, and language mixing are descriptive and do not establish policy-concern coherence. Review representative source comments."
+  },
+  {
+    "section": "4. Annotation readiness and human-dependent analyses",
+    "name": "pilot templates present and blank",
+    "status": "PASSED",
+    "detail": "non-blank annotation cells: 0"
+  },
+  {
+    "section": "4. Annotation readiness and human-dependent analyses",
+    "name": "v2 templates present and blank",
+    "status": "PASSED",
+    "detail": "non-blank annotation cells: 0"
+  },
+  {
+    "section": "4. Annotation readiness and human-dependent analyses",
+    "name": "pilot agreement analysis",
+    "status": "BLOCKED",
+    "detail": "awaiting human annotation: completed annotator_A/B files not present"
+  },
+  {
+    "section": "4. Annotation readiness and human-dependent analyses",
+    "name": "expansion_v2 agreement analysis",
+    "status": "BLOCKED",
+    "detail": "awaiting human annotation: completed annotator_A/B files not present"
+  },
+  {
+    "section": "4. Annotation readiness and human-dependent analyses",
+    "name": "44-pair concern-coherence review",
+    "status": "BLOCKED",
+    "detail": "awaiting two independent bilingual reviewers (human_review/completed/ missing)"
+  },
+  {
+    "section": "5. Supervised models and sentiment/stance separation",
+    "name": "supervised stance baselines (TF-IDF + LR/SVM)",
+    "status": "BLOCKED",
+    "detail": "no adjudicated human stance labels exist; models.stance_classification.validate_labeled_data refuses unlabeled data"
+  },
+  {
+    "section": "5. Supervised models and sentiment/stance separation",
+    "name": "concern-priority scoring",
+    "status": "NOT RUN",
+    "detail": "intentionally not implemented before concern validity is human-assessed"
+  },
+  {
+    "section": "5. Supervised models and sentiment/stance separation",
+    "name": "external sentiment baselines",
+    "status": "NOT RUN",
+    "detail": "auxiliary only; polarity is not stance toward Open Government"
+  },
+  {
+    "section": "6. Full-corpus unsupervised run v1 (exploratory; NOT human-validated)",
+    "name": "run_v1 artifacts match run_manifest.json",
+    "status": "PASSED",
+    "detail": "10,108 entries, 10,043 unique texts; 12 cluster assignment files verified"
+  },
+  {
+    "section": "6. Full-corpus unsupervised run v1 (exploratory; NOT human-validated)",
+    "name": "interpretation",
+    "status": "PASSED",
+    "detail": "clusters are unsupervised (human_validated=False); no concern, stance or sentiment label is implied"
+  },
+  {
+    "section": "6. Full-corpus unsupervised run v1 (exploratory; NOT human-validated)",
+    "name": "reporting configuration",
+    "status": "PASSED",
+    "detail": "multilingual/u15_m50s10 (chosen by a pre-declared readability rule, not by validity)"
+  }
+]
