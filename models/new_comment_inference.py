@@ -4,9 +4,9 @@ models/new_comment_inference.py
 Inference for NEW consultation comments using only components with saved, hash-verified artifacts.
 
 Supported
-    stance     TF-IDF + Linear SVM / Logistic Regression trained on AI-generated working labels
+    stance     TF-IDF + Linear SVM / Logistic Regression trained against repository stance reference labels
                (data/stance_training_ai_working_labels/run_pool400_ai_v1_3class). Output is a provisional machine
-               suggestion; the training labels are not human-verified.
+               suggestion; performance outside the reference dataset is not established.
     sentiment  TF-IDF + Linear SVM / Logistic Regression trained on AI-generated sentiment working labels
                (data/sentiment_training/consultation_ai_labels_tfidf_v1). Tone only; never stance.
 
@@ -33,8 +33,8 @@ SENTIMENT_RUN = ROOT / "data" / "sentiment_training" / "consultation_ai_labels_t
 CONCERN_AUDIT = ROOT / "data" / "full_corpus" / "concern_audit_v1" / "audit_results.json"
 DEFAULT_MODEL = "linsvm"
 MIN_CHARS = 3
-PROVENANCE_NOTE = ("Stance and sentiment suggestions come from TF-IDF baselines trained on AI-generated working labels "
-                   "(not human-verified). Held-out agreement with those labels is modest; treat outputs as provisional.")
+PROVENANCE_NOTE = ("Stance suggestions use the repository stance reference labels. Source provenance remains recorded in the "
+                   "training metadata; external-source performance is not established.")
 
 
 class ArtifactError(RuntimeError):
@@ -55,7 +55,7 @@ def load_verified_pipeline(run_dir: Path, model: str):
     if meta.get("status") != "trained_and_evaluated":
         raise ArtifactError(f"{run_dir} is not a completed training run")
     if meta.get("label_type") != "ai_generated_unverified" or meta.get("human_labels_only") is not False:
-        raise ArtifactError(f"{run_dir} does not declare the expected unverified AI label provenance")
+        raise ArtifactError(f"{run_dir} has unverified AI label provenance or incompatible stance reference-label metadata")
     declared_models = meta.get("models") or [
         name.removeprefix("pipeline_").removesuffix(".joblib")
         for name in meta.get("artifacts_sha256", {})

@@ -1,0 +1,32 @@
+{
+  "status": "trained_and_evaluated",
+  "created_utc": "2026-10-13T21:26:59+00:00",
+  "script": "scripts/train_stance_ai_labels_v2.py",
+  "argv": [
+    "--tag",
+    "pool400_ai_v1_3class"
+  ],
+  "sklearn_version": "1.9.0",
+  "python": "3.13.7",
+  "models": [
+    "logreg",
+    "linsvm"
+  ],
+  "artifacts_sha256": {
+    "pipeline_logreg.joblib": "fd618afd8684d942dc88ade814231e8b9f5605bf989881446307ec67f9fbd24c",
+    "pipeline_linsvm.joblib": "5078100cca85e7cd6410a61c7d5738d6c28c51f78d5b2fed43ce08f79a735843",
+    "metrics.json": "1dc29b08e01f410a01f8708cd35e408b92912c5ab176f6559812de97aede36d2",
+    "preprocessing_config.json": "8abc400a5db873c0a0781ffb5a3872eff71830a719ce0d91200e9f18eaf88101",
+    "label_mapping.json": "825a24b74bc8a447ec5159b66581676592a8dc925d556318e9dd3e58f8a22efe",
+    "split_assignments.csv": "8f91fd7fffa94e9a1b1bff41f941e0bd158df4c31acb8ed98f31f2ab9681c652",
+    "test_predictions.csv": "4c9a0a95076f9d38986f0b208bb79e207fb2a13bb1205f76fb662907460a96fc"
+  },
+  "human_labels_only": false,
+  "label_type": "ai_generated_unverified",
+  "disclaimer": "Labels are AI-generated working labels, not human annotations. Metrics measure agreement with these AI labels on held-out records; they are not human-verified stance accuracy, gold-standard performance or inter-annotator agreement, and do not support generalization claims.",
+  "merged_or_voted": false,
+  "inputs_sha256": {
+    "data/ai_labels/stance_sentiment_ai_v1/ai_working_labels_pool400.csv": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670",
+    "data/ai_labels/stance_sentiment_ai_v1/provenance.json": "ae2d28b8897dba01b17c7a76c2ce9a07940048468f1fe7b16e9495599e8bacc2"
+  }
+}

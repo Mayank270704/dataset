@@ -1,0 +1,38 @@
+{
+  "reference_input": "data\\ai_labels\\stance_sentiment_ai_v1\\ai_working_labels_pool400.csv",
+  "prediction_input": "C:\\Users\\MAYANK SWAROOP\\OneDrive\\Desktop\\dataset\\reports\\stance_candidate_shared_cv_v2\\shared_fold_predictions.jsonl",
+  "eligible_original_records": 399,
+  "eligible_reference_label_counts": {
+    "Neutral": 219,
+    "Support": 140,
+    "Unclear": 40
+  },
+  "eligible_language_counts": {
+    "English": 364,
+    "French": 35
+  },
+  "queue_records": 246,
+  "reference_label_counts_in_queue": {
+    "Neutral": 115,
+    "Support": 91,
+    "Unclear": 40
+  },
+  "language_counts_in_queue": {
+    "English": 211,
+    "French": 35
+  },
+  "review_reason_counts": {
+    "production_candidate_oof_disagreement": 70,
+    "reference_unclear_requires_reason_review": 40,
+    "support_neutral_oof_error": 190,
+    "underrepresented_french_review": 35
+  },
+  "reviewer_fields_blank": true,
+  "predictions_are_repeated_grouped_oof_votes": true,
+  "confidence": "Not supplied: source grouped-CV artifact contains no calibrated confidence scores.",
+  "labels_modified": false,
+  "input_sha256": {
+    "reference_labels": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670",
+    "grouped_oof_predictions": "bc570ca7b3f4764b01c2a45de1139766ec7e66fd77a5223ec0802a9aa1ca789d"
+  }
+}

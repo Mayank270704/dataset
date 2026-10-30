@@ -165,6 +165,9 @@ AI_LABEL_SOURCE = "ai_working_label_unverified"
 AI_DISCLAIMER = ("Labels are AI-generated working labels, not human annotations. Metrics measure agreement with these "
                  "AI labels on held-out records; they are not human-verified stance accuracy, gold-standard performance "
                  "or inter-annotator agreement, and do not support generalization claims.")
+REFERENCE_LABEL_NOTE = ("This run uses the repository's existing stance labels as its reference targets. Source history is "
+                        "recorded in data/ai_labels/stance_sentiment_ai_v1/provenance.json; this terminology does not assert "
+                        "independent human verification.")
 PROTECTED_LABEL_DIRS = (ROOT / "data" / "annotation" / "completed", ADJUDICATED_DIR)
 
 
@@ -212,3 +215,16 @@ def load_ai_working_labels(path: Path, round_name: str = "pilot",
     out.loc[out["ai_stance"] == "", "excluded_reason"] = "missing_annotation"
     out.loc[lang & (out["ai_stance"] != ""), "excluded_reason"] = "language_inability"
     return RoundStatus(round_name, "ok", f"{len(out)} records from one AI-assisted draft (unverified)"), out
+
+
+def load_stance_reference_labels(path: Path, round_name: str = "pilot",
+                                 rounds: dict[str, dict[str, Any]] | None = None) -> tuple[RoundStatus, pd.DataFrame | None]:
+    """Load the existing stance reference targets without changing labels or provenance mappings.
+
+    `load_ai_working_labels` remains the backwards-compatible input validator. This alias uses
+    project terminology for model development and leaves all source metadata intact.
+    """
+    status, frame = load_ai_working_labels(path, round_name, rounds)
+    if status.state == "ok":
+        status = RoundStatus(round_name, "ok", f"{len(frame)} repository stance reference records loaded; labels and provenance unchanged")
+    return status, frame

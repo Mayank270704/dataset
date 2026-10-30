@@ -1,0 +1,168 @@
+{
+  "policy": "For each outer fold, select a top-two LinearSVC margin threshold on three-fold grouped validation within the outer training records; maximize accepted validation accuracy subject to at least 50% validation coverage. Apply only that frozen threshold to the outer validation fold.",
+  "selection_metric": "validation accepted accuracy; tie-break by higher coverage then lower threshold",
+  "coverage_floor": 0.5,
+  "outer_validation": {
+    "n": 1197,
+    "accepted": 652,
+    "coverage": 0.5447,
+    "accepted_accuracy": 0.7255,
+    "per_class_coverage": {
+      "Support": {
+        "accepted": 208,
+        "available": 420,
+        "coverage": 0.4952
+      },
+      "Neutral": {
+        "accepted": 380,
+        "available": 657,
+        "coverage": 0.5784
+      },
+      "Unclear": {
+        "accepted": 64,
+        "available": 120,
+        "coverage": 0.5333
+      }
+    },
+    "accepted_confusion_matrix": [
+      [
+        116,
+        89,
+        3
+      ],
+      [
+        24,
+        355,
+        1
+      ],
+      [
+        22,
+        40,
+        2
+      ]
+    ],
+    "fold_selection": [
+      {
+        "repeat": 0,
+        "fold": 0,
+        "C": 1.0,
+        "threshold": 0.7058952000685788,
+        "inner_validation_coverage": 0.542319749216301,
+        "inner_validation_accepted_accuracy": 0.7514450867052023
+      },
+      {
+        "repeat": 0,
+        "fold": 1,
+        "C": 3.0,
+        "threshold": 0.815583902642609,
+        "inner_validation_coverage": 0.503125,
+        "inner_validation_accepted_accuracy": 0.7515527950310559
+      },
+      {
+        "repeat": 0,
+        "fold": 2,
+        "C": 3.0,
+        "threshold": 0.7964925905891256,
+        "inner_validation_coverage": 0.5454545454545454,
+        "inner_validation_accepted_accuracy": 0.7701149425287356
+      },
+      {
+        "repeat": 0,
+        "fold": 3,
+        "C": 3.0,
+        "threshold": 0.7729841544914554,
+        "inner_validation_coverage": 0.5329153605015674,
+        "inner_validation_accepted_accuracy": 0.8058823529411765
+      },
+      {
+        "repeat": 0,
+        "fold": 4,
+        "C": 3.0,
+        "threshold": 0.8195173605026471,
+        "inner_validation_coverage": 0.5047021943573667,
+        "inner_validation_accepted_accuracy": 0.7142857142857143
+      },
+      {
+        "repeat": 1,
+        "fold": 0,
+        "C": 0.3,
+        "threshold": 0.5437926045698862,
+        "inner_validation_coverage": 0.5015673981191222,
+        "inner_validation_accepted_accuracy": 0.6875
+      },
+      {
+        "repeat": 1,
+        "fold": 1,
+        "C": 0.3,
+        "threshold": 0.591165585723924,
+        "inner_validation_coverage": 0.5078369905956113,
+        "inner_validation_accepted_accuracy": 0.6975308641975309
+      },
+      {
+        "repeat": 1,
+        "fold": 2,
+        "C": 0.3,
+        "threshold": 0.45340982845114597,
+        "inner_validation_coverage": 0.571875,
+        "inner_validation_accepted_accuracy": 0.7377049180327869
+      },
+      {
+        "repeat": 1,
+        "fold": 3,
+        "C": 1.0,
+        "threshold": 0.8068052772663812,
+        "inner_validation_coverage": 0.5015673981191222,
+        "inner_validation_accepted_accuracy": 0.78125
+      },
+      {
+        "repeat": 1,
+        "fold": 4,
+        "C": 0.3,
+        "threshold": 0.5599778759429072,
+        "inner_validation_coverage": 0.5172413793103449,
+        "inner_validation_accepted_accuracy": 0.7575757575757576
+      },
+      {
+        "repeat": 2,
+        "fold": 0,
+        "C": 0.3,
+        "threshold": 0.5914675358775648,
+        "inner_validation_coverage": 0.5015673981191222,
+        "inner_validation_accepted_accuracy": 0.73125
+      },
+      {
+        "repeat": 2,
+        "fold": 1,
+        "C": 1.0,
+        "threshold": 0.6503516838697246,
+        "inner_validation_coverage": 0.525,
+        "inner_validation_accepted_accuracy": 0.7738095238095238
+      },
+      {
+        "repeat": 2,
+        "fold": 2,
+        "C": 3.0,
+        "threshold": 0.8170523405654909,
+        "inner_validation_coverage": 0.5015673981191222,
+        "inner_validation_accepted_accuracy": 0.70625
+      },
+      {
+        "repeat": 2,
+        "fold": 3,
+        "C": 1.0,
+        "threshold": 0.7009079810841332,
+        "inner_validation_coverage": 0.5235109717868338,
+        "inner_validation_accepted_accuracy": 0.7485029940119761
+      },
+      {
+        "repeat": 2,
+        "fold": 4,
+        "C": 3.0,
+        "threshold": 0.7630952914307164,
+        "inner_validation_coverage": 0.5109717868338558,
+        "inner_validation_accepted_accuracy": 0.6871165644171779
+      }
+    ]
+  },
+  "note": "Selective accuracy is conditional on accepted predictions and is not overall accuracy. Top-two LinearSVC margins are uncalibrated, fold-specific ranking signals. This is an analysis-only policy and is not enabled in the staging route. The threshold uses grouped validation only; outer grouped folds provide held-out evaluation and were not used to select the threshold."
+}

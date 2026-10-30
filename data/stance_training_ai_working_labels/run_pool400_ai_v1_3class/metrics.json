@@ -1,0 +1,307 @@
+{
+  "label_type": "ai_generated_unverified",
+  "disclaimer": "Labels are AI-generated working labels, not human annotations. Metrics measure agreement with these AI labels on held-out records; they are not human-verified stance accuracy, gold-standard performance or inter-annotator agreement, and do not support generalization claims.",
+  "labels": [
+    "Support",
+    "Neutral",
+    "Unclear"
+  ],
+  "dropped": {
+    "below_min_class_count": {
+      "Oppose": 1
+    }
+  },
+  "seed": 42,
+  "n": {
+    "train": 239,
+    "validation": 80,
+    "test": 80
+  },
+  "n_groups": 398,
+  "corpus_group_mapping": {
+    "mapped": 400,
+    "of": 400
+  },
+  "class_distribution": {
+    "train": {
+      "Support": 84,
+      "Neutral": 131,
+      "Unclear": 24
+    },
+    "validation": {
+      "Support": 28,
+      "Neutral": 44,
+      "Unclear": 8
+    },
+    "test": {
+      "Support": 28,
+      "Neutral": 44,
+      "Unclear": 8
+    },
+    "all": {
+      "Support": 140,
+      "Neutral": 219,
+      "Unclear": 40
+    }
+  },
+  "baselines": {
+    "majority_class": {
+      "macro_f1": 0.2366,
+      "macro_f1_ci95_group_bootstrap": [
+        0.2034,
+        0.2646
+      ],
+      "per_class": {
+        "Support": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 28
+        },
+        "Neutral": {
+          "precision": 0.55,
+          "recall": 1.0,
+          "f1": 0.7097,
+          "support": 44
+        },
+        "Unclear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 8
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "Support",
+          "Neutral",
+          "Unclear"
+        ],
+        "rows_true_cols_pred": [
+          [
+            0,
+            28,
+            0
+          ],
+          [
+            0,
+            44,
+            0
+          ],
+          [
+            0,
+            8,
+            0
+          ]
+        ]
+      },
+      "accuracy": 0.55,
+      "predicts": "Neutral"
+    },
+    "stratified_random": {
+      "macro_f1_mean": 0.3268,
+      "macro_f1_p2.5_p97.5": [
+        0.2279,
+        0.4308
+      ]
+    }
+  },
+  "models": {
+    "logreg": {
+      "selected_C": 3.0,
+      "validation_macro_f1_by_C": {
+        "0.1": 0.3696,
+        "0.3": 0.3847,
+        "1.0": 0.3725,
+        "3.0": 0.3859,
+        "10.0": 0.3753
+      },
+      "test": {
+        "macro_f1": 0.3641,
+        "macro_f1_ci95_group_bootstrap": [
+          0.287,
+          0.4391
+        ],
+        "per_class": {
+          "Support": {
+            "precision": 0.4571,
+            "recall": 0.5714,
+            "f1": 0.5079,
+            "support": 28
+          },
+          "Neutral": {
+            "precision": 0.5778,
+            "recall": 0.5909,
+            "f1": 0.5843,
+            "support": 44
+          },
+          "Unclear": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Support",
+            "Neutral",
+            "Unclear"
+          ],
+          "rows_true_cols_pred": [
+            [
+              16,
+              12,
+              0
+            ],
+            [
+              18,
+              26,
+              0
+            ],
+            [
+              1,
+              7,
+              0
+            ]
+          ]
+        },
+        "accuracy": 0.525
+      },
+      "train_plus_validation_macro_f1_refit": 1.0,
+      "test_predicted_distribution": {
+        "Neutral": 45,
+        "Support": 35
+      },
+      "vocabulary_size": 8421
+    },
+    "linsvm": {
+      "selected_C": 0.3,
+      "validation_macro_f1_by_C": {
+        "0.1": 0.3626,
+        "0.3": 0.4017,
+        "1.0": 0.3645,
+        "3.0": 0.3753,
+        "10.0": 0.3753
+      },
+      "test": {
+        "macro_f1": 0.3958,
+        "macro_f1_ci95_group_bootstrap": [
+          0.3181,
+          0.4714
+        ],
+        "per_class": {
+          "Support": {
+            "precision": 0.5161,
+            "recall": 0.5714,
+            "f1": 0.5424,
+            "support": 28
+          },
+          "Neutral": {
+            "precision": 0.6122,
+            "recall": 0.6818,
+            "f1": 0.6452,
+            "support": 44
+          },
+          "Unclear": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          }
+        },
+        "confusion_matrix": {
+          "labels": [
+            "Support",
+            "Neutral",
+            "Unclear"
+          ],
+          "rows_true_cols_pred": [
+            [
+              16,
+              12,
+              0
+            ],
+            [
+              14,
+              30,
+              0
+            ],
+            [
+              1,
+              7,
+              0
+            ]
+          ]
+        },
+        "accuracy": 0.575
+      },
+      "train_plus_validation_macro_f1_refit": 1.0,
+      "test_predicted_distribution": {
+        "Neutral": 49,
+        "Support": 31
+      },
+      "vocabulary_size": 8421
+    }
+  },
+  "c_grid": [
+    0.1,
+    0.3,
+    1.0,
+    3.0,
+    10.0
+  ],
+  "selection": "validation macro-F1; refit on train+validation; single test evaluation",
+  "split_sensitivity": {
+    "models": [
+      "logreg",
+      "linsvm"
+    ],
+    "per_seed": [
+      {
+        "seed": 42,
+        "logreg": 0.3641,
+        "linsvm": 0.3958,
+        "majority": 0.2366
+      },
+      {
+        "seed": 43,
+        "logreg": 0.3646,
+        "linsvm": 0.3568,
+        "majority": 0.2366
+      },
+      {
+        "seed": 44,
+        "logreg": 0.4024,
+        "linsvm": 0.3738,
+        "majority": 0.2366
+      },
+      {
+        "seed": 45,
+        "logreg": 0.3954,
+        "linsvm": 0.4102,
+        "majority": 0.2366
+      },
+      {
+        "seed": 46,
+        "logreg": 0.3844,
+        "linsvm": 0.3506,
+        "majority": 0.2366
+      }
+    ],
+    "summary": {
+      "logreg": {
+        "mean": 0.3822,
+        "sd": 0.0156
+      },
+      "linsvm": {
+        "mean": 0.3774,
+        "sd": 0.0227
+      },
+      "majority": {
+        "mean": 0.2366,
+        "sd": 0.0
+      }
+    }
+  }
+}

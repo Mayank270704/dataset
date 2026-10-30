@@ -1,0 +1,552 @@
+{
+  "evaluation_status": "repeated_grouped_cv_development_robustness_not_independent",
+  "seed": 20261029,
+  "folds": 5,
+  "repeats": 3,
+  "fold_count": 15,
+  "original_records": 399,
+  "original_class_counts": {
+    "Support": 140,
+    "Neutral": 219,
+    "Unclear": 40
+  },
+  "original_language_counts": {
+    "English": 364,
+    "French": 35
+  },
+  "unique_source_duplicate_groups": 398,
+  "group_crossings": 0,
+  "all_synthetic_rows_training_only": true,
+  "settings_frozen_from_v4_validation": {
+    "synthetic_ratio": 0.5,
+    "word_char": {
+      "C": 1.0,
+      "class_weight": "balanced"
+    },
+    "production": {
+      "word_only_C": 0.3,
+      "class_weight": "balanced"
+    },
+    "old_test_used_for_selection": false
+  },
+  "v2_generator_reproducibility": {
+    "model_rows_reproduced": 360,
+    "protocol_rows_reproduced": 8,
+    "deterministic_match": true,
+    "quality": {
+      "rows": 360,
+      "class_counts": {
+        "Support": 120,
+        "Neutral": 120,
+        "Unclear": 120
+      },
+      "unique_texts": 360,
+      "duplicate_texts": 0,
+      "unclear_reasons": {
+        "off_topic": 46,
+        "insufficient_context": 38,
+        "fragment": 36
+      },
+      "disabled_v4_templates": {
+        "unclear_ambiguity_1": "Explicitly combines support for openness with rejection of publishing records; this may be Mixed under the guideline.",
+        "unclear_ambiguity_2": "Could be Support if the caveat is about implementation rather than the stance target.",
+        "unclear_ambiguity_3": "Directly contradictory support and opposition; no stable intended label is evident.",
+        "unclear_ambiguity_4": "Semantically awkward wording can imply Support rather than Unclear.",
+        "unclear_language_fr_1": "Annotator reading ability is not visible in the comment text.",
+        "unclear_language_fr_2": "Annotator reading ability is not visible in the comment text.",
+        "unclear_language_fr_3": "Annotator reading ability is not visible in the comment text.",
+        "unclear_language_fr_4": "Annotator reading ability is not visible in the comment text."
+      }
+    }
+  },
+  "synthetic_pool_diversity": {
+    "v1_candidate_pool": {
+      "rows": 200,
+      "unique_texts": 128
+    },
+    "v2_model_pool": {
+      "rows": 360,
+      "unique_texts": 360
+    }
+  },
+  "synthetic_overlap_with_all_originals": {
+    "candidate_v1": {
+      "exact_duplicate_count": 0,
+      "near_duplicate_thresholds": {
+        "char_cosine": 0.72,
+        "sequence_ratio": 0.82
+      },
+      "near_duplicate_count": 0
+    },
+    "candidate_v2": {
+      "exact_duplicate_count": 0,
+      "near_duplicate_thresholds": {
+        "char_cosine": 0.72,
+        "sequence_ratio": 0.82
+      },
+      "near_duplicate_count": 0
+    }
+  },
+  "summary_mean_std": {
+    "production_word_only": {
+      "accuracy": {
+        "mean": 0.5898,
+        "std": 0.0434
+      },
+      "macro_f1": {
+        "mean": 0.4036,
+        "std": 0.0303
+      },
+      "per_class": {
+        "Support": {
+          "precision": {
+            "mean": 0.5313,
+            "std": 0.0641
+          },
+          "recall": {
+            "mean": 0.5452,
+            "std": 0.064
+          },
+          "f1": {
+            "mean": 0.5359,
+            "std": 0.054
+          },
+          "support": {
+            "mean": 28.0,
+            "std": 0.0
+          }
+        },
+        "Neutral": {
+          "precision": {
+            "mean": 0.6326,
+            "std": 0.0353
+          },
+          "recall": {
+            "mean": 0.7263,
+            "std": 0.0748
+          },
+          "f1": {
+            "mean": 0.675,
+            "std": 0.0479
+          },
+          "support": {
+            "mean": 43.8,
+            "std": 0.414
+          }
+        },
+        "Unclear": {
+          "precision": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "recall": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "f1": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "support": {
+            "mean": 8.0,
+            "std": 0.0
+          }
+        }
+      },
+      "confusion_matrix_pooled_repeated_oof": [
+        [
+          229,
+          189,
+          2
+        ],
+        [
+          174,
+          477,
+          6
+        ],
+        [
+          32,
+          88,
+          0
+        ]
+      ],
+      "pooled_oof_n": 1197
+    },
+    "word_char_original_only": {
+      "accuracy": {
+        "mean": 0.5982,
+        "std": 0.0401
+      },
+      "macro_f1": {
+        "mean": 0.4292,
+        "std": 0.0425
+      },
+      "per_class": {
+        "Support": {
+          "precision": {
+            "mean": 0.5451,
+            "std": 0.0605
+          },
+          "recall": {
+            "mean": 0.5595,
+            "std": 0.0583
+          },
+          "f1": {
+            "mean": 0.5504,
+            "std": 0.0487
+          },
+          "support": {
+            "mean": 28.0,
+            "std": 0.0
+          }
+        },
+        "Neutral": {
+          "precision": {
+            "mean": 0.6448,
+            "std": 0.0339
+          },
+          "recall": {
+            "mean": 0.7261,
+            "std": 0.0602
+          },
+          "f1": {
+            "mean": 0.6823,
+            "std": 0.0409
+          },
+          "support": {
+            "mean": 43.8,
+            "std": 0.414
+          }
+        },
+        "Unclear": {
+          "precision": {
+            "mean": 0.1667,
+            "std": 0.3086
+          },
+          "recall": {
+            "mean": 0.0333,
+            "std": 0.0572
+          },
+          "f1": {
+            "mean": 0.0548,
+            "std": 0.0942
+          },
+          "support": {
+            "mean": 8.0,
+            "std": 0.0
+          }
+        }
+      },
+      "confusion_matrix_pooled_repeated_oof": [
+        [
+          235,
+          179,
+          6
+        ],
+        [
+          167,
+          477,
+          13
+        ],
+        [
+          32,
+          84,
+          4
+        ]
+      ],
+      "pooled_oof_n": 1197
+    },
+    "candidate_v1_recipe": {
+      "accuracy": {
+        "mean": 0.6191,
+        "std": 0.0389
+      },
+      "macro_f1": {
+        "mean": 0.4677,
+        "std": 0.041
+      },
+      "per_class": {
+        "Support": {
+          "precision": {
+            "mean": 0.5701,
+            "std": 0.0728
+          },
+          "recall": {
+            "mean": 0.5881,
+            "std": 0.07
+          },
+          "f1": {
+            "mean": 0.5759,
+            "std": 0.0566
+          },
+          "support": {
+            "mean": 28.0,
+            "std": 0.0
+          }
+        },
+        "Neutral": {
+          "precision": {
+            "mean": 0.6673,
+            "std": 0.0356
+          },
+          "recall": {
+            "mean": 0.7367,
+            "std": 0.0602
+          },
+          "f1": {
+            "mean": 0.6989,
+            "std": 0.0355
+          },
+          "support": {
+            "mean": 43.8,
+            "std": 0.414
+          }
+        },
+        "Unclear": {
+          "precision": {
+            "mean": 0.3333,
+            "std": 0.3318
+          },
+          "recall": {
+            "mean": 0.0833,
+            "std": 0.061
+          },
+          "f1": {
+            "mean": 0.1282,
+            "std": 0.0952
+          },
+          "support": {
+            "mean": 8.0,
+            "std": 0.0
+          }
+        }
+      },
+      "confusion_matrix_pooled_repeated_oof": [
+        [
+          247,
+          164,
+          9
+        ],
+        [
+          160,
+          484,
+          13
+        ],
+        [
+          31,
+          79,
+          10
+        ]
+      ],
+      "pooled_oof_n": 1197
+    },
+    "candidate_v2_recipe": {
+      "accuracy": {
+        "mean": 0.6115,
+        "std": 0.0484
+      },
+      "macro_f1": {
+        "mean": 0.4596,
+        "std": 0.0466
+      },
+      "per_class": {
+        "Support": {
+          "precision": {
+            "mean": 0.5746,
+            "std": 0.0962
+          },
+          "recall": {
+            "mean": 0.5857,
+            "std": 0.0554
+          },
+          "f1": {
+            "mean": 0.5774,
+            "std": 0.0636
+          },
+          "support": {
+            "mean": 28.0,
+            "std": 0.0
+          }
+        },
+        "Neutral": {
+          "precision": {
+            "mean": 0.6532,
+            "std": 0.0336
+          },
+          "recall": {
+            "mean": 0.726,
+            "std": 0.0721
+          },
+          "f1": {
+            "mean": 0.6866,
+            "std": 0.0455
+          },
+          "support": {
+            "mean": 43.8,
+            "std": 0.414
+          }
+        },
+        "Unclear": {
+          "precision": {
+            "mean": 0.3278,
+            "std": 0.3838
+          },
+          "recall": {
+            "mean": 0.075,
+            "std": 0.0634
+          },
+          "f1": {
+            "mean": 0.1148,
+            "std": 0.0992
+          },
+          "support": {
+            "mean": 8.0,
+            "std": 0.0
+          }
+        }
+      },
+      "confusion_matrix_pooled_repeated_oof": [
+        [
+          246,
+          170,
+          4
+        ],
+        [
+          161,
+          477,
+          19
+        ],
+        [
+          28,
+          83,
+          9
+        ]
+      ],
+      "pooled_oof_n": 1197
+    }
+  },
+  "paired_fold_differences": {
+    "word_char_original_only": {
+      "production_word_only": {
+        "accuracy_delta_mean": 0.0083,
+        "macro_f1_delta_mean": 0.0256,
+        "macro_f1_delta_sd": 0.0443,
+        "macro_f1_fold_wins": 11,
+        "macro_f1_fold_ties": 0,
+        "macro_f1_fold_losses": 4
+      },
+      "candidate_v1_recipe": {
+        "accuracy_delta_mean": -0.0209,
+        "macro_f1_delta_mean": -0.0385,
+        "macro_f1_delta_sd": 0.0448,
+        "macro_f1_fold_wins": 4,
+        "macro_f1_fold_ties": 0,
+        "macro_f1_fold_losses": 11
+      }
+    },
+    "candidate_v1_recipe": {
+      "production_word_only": {
+        "accuracy_delta_mean": 0.0292,
+        "macro_f1_delta_mean": 0.0641,
+        "macro_f1_delta_sd": 0.0466,
+        "macro_f1_fold_wins": 13,
+        "macro_f1_fold_ties": 0,
+        "macro_f1_fold_losses": 2
+      }
+    },
+    "candidate_v2_recipe": {
+      "production_word_only": {
+        "accuracy_delta_mean": 0.0216,
+        "macro_f1_delta_mean": 0.056,
+        "macro_f1_delta_sd": 0.0505,
+        "macro_f1_fold_wins": 12,
+        "macro_f1_fold_ties": 0,
+        "macro_f1_fold_losses": 3
+      },
+      "candidate_v1_recipe": {
+        "accuracy_delta_mean": -0.0076,
+        "macro_f1_delta_mean": -0.0081,
+        "macro_f1_delta_sd": 0.0236,
+        "macro_f1_fold_wins": 4,
+        "macro_f1_fold_ties": 1,
+        "macro_f1_fold_losses": 10
+      }
+    }
+  },
+  "language_metrics": {
+    "production_word_only": {
+      "English": {
+        "validation_records_over_all_repeats": 1092,
+        "accuracy_mean": 0.5899,
+        "accuracy_std": 0.0478,
+        "macro_f1_mean": 0.405,
+        "macro_f1_std": 0.0326
+      },
+      "French": {
+        "validation_records_over_all_repeats": 105,
+        "accuracy_mean": 0.5958,
+        "accuracy_std": 0.1953,
+        "macro_f1_mean": 0.2664,
+        "macro_f1_std": 0.0804
+      }
+    },
+    "word_char_original_only": {
+      "English": {
+        "validation_records_over_all_repeats": 1092,
+        "accuracy_mean": 0.6007,
+        "accuracy_std": 0.0384,
+        "macro_f1_mean": 0.4332,
+        "macro_f1_std": 0.0423
+      },
+      "French": {
+        "validation_records_over_all_repeats": 105,
+        "accuracy_mean": 0.5608,
+        "accuracy_std": 0.1896,
+        "macro_f1_mean": 0.2748,
+        "macro_f1_std": 0.0966
+      }
+    },
+    "candidate_v1_recipe": {
+      "English": {
+        "validation_records_over_all_repeats": 1092,
+        "accuracy_mean": 0.619,
+        "accuracy_std": 0.0422,
+        "macro_f1_mean": 0.4734,
+        "macro_f1_std": 0.0446
+      },
+      "French": {
+        "validation_records_over_all_repeats": 105,
+        "accuracy_mean": 0.6208,
+        "accuracy_std": 0.1885,
+        "macro_f1_mean": 0.3435,
+        "macro_f1_std": 0.1243
+      }
+    },
+    "candidate_v2_recipe": {
+      "English": {
+        "validation_records_over_all_repeats": 1092,
+        "accuracy_mean": 0.6096,
+        "accuracy_std": 0.05,
+        "macro_f1_mean": 0.4647,
+        "macro_f1_std": 0.0514
+      },
+      "French": {
+        "validation_records_over_all_repeats": 105,
+        "accuracy_mean": 0.6275,
+        "accuracy_std": 0.1895,
+        "macro_f1_mean": 0.3326,
+        "macro_f1_std": 0.1137
+      }
+    }
+  },
+  "mean_fit_seconds_per_fold": {
+    "production_word_only": 0.0204,
+    "word_char_original_only": 0.0934,
+    "candidate_v1_recipe": 0.1196,
+    "candidate_v2_recipe": 0.1264
+  },
+  "production_artifact_sha256": "5078100cca85e7cd6410a61c7d5738d6c28c51f78d5b2fed43ce08f79a735843",
+  "existing_v1_candidate_sha256": "5e3710421b6714cc5b90613db557e338f808ec30e5e663d25deed7b45988c431",
+  "production_and_candidate_unchanged": true,
+  "input_sha256": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670"
+}

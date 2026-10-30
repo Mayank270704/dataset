@@ -1,0 +1,10 @@
+numpy
+pandas
+scipy
+scikit-learn
+joblib
+psutil
+hdbscan
+umap-learn
+torch
+streamlit

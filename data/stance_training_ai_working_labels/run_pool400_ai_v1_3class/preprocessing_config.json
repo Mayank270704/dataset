@@ -1,0 +1,116 @@
+{
+  "base": {
+    "tfidf": {
+      "lowercase": true,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 1,
+      "max_features": 20000,
+      "sublinear_tf": true,
+      "token_pattern": "(?u)\\b\\w\\w+\\b",
+      "strip_accents": null
+    },
+    "logreg": {
+      "C": 1.0,
+      "max_iter": 2000,
+      "class_weight": "balanced",
+      "solver": "lbfgs"
+    },
+    "linsvm": {
+      "C": 1.0,
+      "max_iter": 5000,
+      "class_weight": "balanced"
+    },
+    "test_size": 0.25,
+    "seed": 42,
+    "cv_folds_on_train": 5,
+    "bootstrap": 1000,
+    "min_gold": 40,
+    "min_class_count": 5,
+    "min_test_records": 10,
+    "exclude_labels": [],
+    "near_dup_jaccard": 0.5,
+    "near_dup_containment": 0.9
+  },
+  "final_per_model": {
+    "logreg": {
+      "tfidf": {
+        "lowercase": true,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "min_df": 1,
+        "max_features": 20000,
+        "sublinear_tf": true,
+        "token_pattern": "(?u)\\b\\w\\w+\\b",
+        "strip_accents": null
+      },
+      "logreg": {
+        "C": 3.0,
+        "max_iter": 2000,
+        "class_weight": "balanced",
+        "solver": "lbfgs"
+      },
+      "linsvm": {
+        "C": 1.0,
+        "max_iter": 5000,
+        "class_weight": "balanced"
+      },
+      "test_size": 0.25,
+      "seed": 42,
+      "cv_folds_on_train": 5,
+      "bootstrap": 1000,
+      "min_gold": 40,
+      "min_class_count": 5,
+      "min_test_records": 10,
+      "exclude_labels": [],
+      "near_dup_jaccard": 0.5,
+      "near_dup_containment": 0.9
+    },
+    "linsvm": {
+      "tfidf": {
+        "lowercase": true,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "min_df": 1,
+        "max_features": 20000,
+        "sublinear_tf": true,
+        "token_pattern": "(?u)\\b\\w\\w+\\b",
+        "strip_accents": null
+      },
+      "logreg": {
+        "C": 1.0,
+        "max_iter": 2000,
+        "class_weight": "balanced",
+        "solver": "lbfgs"
+      },
+      "linsvm": {
+        "C": 0.3,
+        "max_iter": 5000,
+        "class_weight": "balanced"
+      },
+      "test_size": 0.25,
+      "seed": 42,
+      "cv_folds_on_train": 5,
+      "bootstrap": 1000,
+      "min_gold": 40,
+      "min_class_count": 5,
+      "min_test_records": 10,
+      "exclude_labels": [],
+      "near_dup_jaccard": 0.5,
+      "near_dup_containment": 0.9
+    }
+  },
+  "c_grid": [
+    0.1,
+    0.3,
+    1.0,
+    3.0,
+    10.0
+  ]
+}

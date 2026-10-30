@@ -1,0 +1,156 @@
+{
+  "candidate_id": "stance_context_wordchar_5class_synth_v1",
+  "status": "staging_only_not_production",
+  "deployed": false,
+  "feature_builder": "models.context_stance_features.build_context_feature",
+  "feature_order": [
+    "question_context",
+    "question_wording",
+    "original_text"
+  ],
+  "feature_allowlist": [
+    "question_context",
+    "question_wording",
+    "original_text"
+  ],
+  "forbidden_feature_families": [
+    "labels",
+    "reviewer decisions/notes",
+    "label provenance",
+    "source identifiers",
+    "sentiment",
+    "synthetic metadata"
+  ],
+  "labels": [
+    "Support",
+    "Neutral",
+    "Oppose",
+    "Mixed",
+    "Unclear"
+  ],
+  "configuration": {
+    "kind": "word_char_linsvm",
+    "word_ngram_range": [
+      1,
+      2
+    ],
+    "word_max_features": 20000,
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "char_max_features": 30000,
+    "char_min_df": 2,
+    "class_weight": "balanced",
+    "C": 3.0,
+    "synthetic_per_class": 40,
+    "seed": 20261029
+  },
+  "training": {
+    "original_records": 400,
+    "original_class_counts": {
+      "Neutral": 219,
+      "Support": 140,
+      "Unclear": 40,
+      "Oppose": 1
+    },
+    "synthetic_rows": 120,
+    "synthetic_class_counts": {
+      "Oppose": 40,
+      "Mixed": 40,
+      "Unclear": 40
+    },
+    "training_manifest_sha256": "d8acd7d259c5a8876333ed38bf0e17c97eb73562fedc801014f27d2b34a8d484",
+    "reference_labels_sha256": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670",
+    "synthetic_rows_sha256": "f9482ae690ec92eb3b880e7c62a6d2b3831104bd400d730b981b962e2ed42048",
+    "synthetic_generation_manifest_sha256": "4b8d56b45512b1f240282873a153a8b29d4f08df2d8de55cd131049d02547230"
+  },
+  "configuration_validation": {
+    "method": "5-fold StratifiedGroupKFold on original evaluable records; synthetic rows are appended only to each fold training partition",
+    "selection_metric": "macro-F1 on original observed classes, then accuracy, fewer synthetic rows, lower C",
+    "results": [
+      {
+        "synthetic_per_class": 40,
+        "C": 0.3,
+        "validation_macro_f1": 0.4519,
+        "validation_accuracy": 0.6391,
+        "validation_five_class_macro_f1_with_zero_support": 0.2711
+      },
+      {
+        "synthetic_per_class": 40,
+        "C": 1.0,
+        "validation_macro_f1": 0.4442,
+        "validation_accuracy": 0.6466,
+        "validation_five_class_macro_f1_with_zero_support": 0.2665
+      },
+      {
+        "synthetic_per_class": 40,
+        "C": 3.0,
+        "validation_macro_f1": 0.4571,
+        "validation_accuracy": 0.6491,
+        "validation_five_class_macro_f1_with_zero_support": 0.2743
+      },
+      {
+        "synthetic_per_class": 80,
+        "C": 0.3,
+        "validation_macro_f1": 0.4414,
+        "validation_accuracy": 0.6441,
+        "validation_five_class_macro_f1_with_zero_support": 0.2649
+      },
+      {
+        "synthetic_per_class": 80,
+        "C": 1.0,
+        "validation_macro_f1": 0.4487,
+        "validation_accuracy": 0.6566,
+        "validation_five_class_macro_f1_with_zero_support": 0.2692
+      },
+      {
+        "synthetic_per_class": 80,
+        "C": 3.0,
+        "validation_macro_f1": 0.4479,
+        "validation_accuracy": 0.6516,
+        "validation_five_class_macro_f1_with_zero_support": 0.2687
+      },
+      {
+        "synthetic_per_class": 120,
+        "C": 0.3,
+        "validation_macro_f1": 0.442,
+        "validation_accuracy": 0.6466,
+        "validation_five_class_macro_f1_with_zero_support": 0.2652
+      },
+      {
+        "synthetic_per_class": 120,
+        "C": 1.0,
+        "validation_macro_f1": 0.451,
+        "validation_accuracy": 0.6591,
+        "validation_five_class_macro_f1_with_zero_support": 0.2706
+      },
+      {
+        "synthetic_per_class": 120,
+        "C": 3.0,
+        "validation_macro_f1": 0.4491,
+        "validation_accuracy": 0.6541,
+        "validation_five_class_macro_f1_with_zero_support": 0.2695
+      }
+    ]
+  },
+  "outer_evaluation_folds": {
+    "repeats": 3,
+    "folds_per_repeat": 5,
+    "fold_manifest_sha256": "9eab4178617b9a5ebd79a4c863933ecb17853bf0268ffae691cdb5ad1a530d50"
+  },
+  "artifact_sha256": "e772daeab6b4fa69f53ef56dd6ba3e57320b9afe58c1ce933c09551a6d0ce322",
+  "production_artifact_sha256": "5078100cca85e7cd6410a61c7d5738d6c28c51f78d5b2fed43ce08f79a735843",
+  "limitations": [
+    "Oppose has one original reference row and Mixed has none; neither class has original grouped evaluation support.",
+    "Metrics on existing original folds cannot validate Oppose or Mixed generalization.",
+    "Existing reference labels were previously exposed during development and are not human-verified."
+  ],
+  "rollback": "No production artifact or route was changed. Stop using /api/inference/stance/five-class-staging and keep production loading data/stance_training_ai_working_labels/run_pool400_ai_v1_3class/pipeline_linsvm.joblib.",
+  "software": {
+    "python": "3.13.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit_learn": "1.9.0"
+  }
+}

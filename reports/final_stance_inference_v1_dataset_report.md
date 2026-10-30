@@ -1,15 +1,17 @@
-# PolicyLens – Final Stance Inference v1: Dataset Usage and Label Mapping Report
+# PolicyLens – Legacy Final Stance Inference v1 (Superseded)
 
 **Document version:** 1.0  
 **Created:** 2026-10-29  
 **Pipeline:** `FinalStancePredictor` / `models/stance_inference_v2.py`  
 **Script:** `scripts/run_final_stance_inference_v1.py`
 
+> Historical documentation only. The heuristic described below was removed. Current inference returns only the model's trained Support / Neutral / Unclear classes; it never derives Oppose from sentiment. See `reports/stance_feature_experiments_v3/report.md` and the active entry in `models/MODEL_REGISTRY.md`.
+
 ---
 
-## Executive Summary
+## Historical implementation (no longer active)
 
-The final stance inference pipeline (v1) produces four-label stance predictions —
+The superseded v1 implementation produced four-label stance predictions —
 **Support / Oppose / Neutral / Unclear** — for new consultation comments by combining
 two pre-trained models and a deterministic heuristic rule.
 

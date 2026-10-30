@@ -1,0 +1,88 @@
+{
+  "candidate_id": "stance_context_wordchar_v1",
+  "status": "staging_only_not_production",
+  "feature_mode": "question_context + question_wording + original_text",
+  "feature_builder": "models.context_stance_features.build_context_feature",
+  "feature_allowlist": [
+    "question_wording",
+    "question_context",
+    "original_text"
+  ],
+  "forbidden_feature_families": [
+    "reference/AI labels",
+    "reviewer decisions/notes",
+    "label provenance",
+    "source identifiers",
+    "sentiment outputs",
+    "language metadata"
+  ],
+  "configuration": {
+    "kind": "word_char_linsvm",
+    "word_ngram_range": [
+      1,
+      2
+    ],
+    "word_max_features": 20000,
+    "char_analyzer": "char_wb",
+    "char_ngram_range": [
+      3,
+      5
+    ],
+    "char_max_features": 30000,
+    "char_min_df": 2,
+    "class_weight": "balanced",
+    "C": 1.0,
+    "seed": 20261029
+  },
+  "training": {
+    "rows": 399,
+    "class_counts": {
+      "Neutral": 219,
+      "Support": 140,
+      "Unclear": 40
+    },
+    "reference_labels": "repository expansion_v2, unverified development labels",
+    "training_rows_sha256": "29e244e18352057688723dd2600b35b3c8281520684cbe86000cc2b828ed9eac",
+    "reference_data_sha256": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670"
+  },
+  "validation_selection": {
+    "method": "5-fold StratifiedGroupKFold, grouped by saved source/duplicate leakage groups",
+    "metric": "macro-F1, then accuracy, then lower C",
+    "candidates": [
+      0.3,
+      1.0,
+      3.0
+    ],
+    "results": [
+      {
+        "C": 0.3,
+        "macro_f1": 0.47222,
+        "accuracy": 0.63412
+      },
+      {
+        "C": 1.0,
+        "macro_f1": 0.47846,
+        "accuracy": 0.64674
+      },
+      {
+        "C": 3.0,
+        "macro_f1": 0.47759999999999997,
+        "accuracy": 0.6468
+      }
+    ]
+  },
+  "shared_outer_folds": {
+    "repeats": 3,
+    "folds_per_repeat": 5,
+    "fold_manifest_sha256": "9eab4178617b9a5ebd79a4c863933ecb17853bf0268ffae691cdb5ad1a530d50"
+  },
+  "artifact_sha256": "b85b25bee4dd11154e97953b77d3ab25cd96a65ae60fffe523faf8d900d0601b",
+  "production_artifact_sha256": "5078100cca85e7cd6410a61c7d5738d6c28c51f78d5b2fed43ce08f79a735843",
+  "rollback": "No production routing changed. Keep /api/inference/stance and /api/inference/consultation unchanged; disable/remove only the /api/inference/stance/context-staging route or its demo UI panel. Production remains data/stance_training_ai_working_labels/run_pool400_ai_v1_3class/pipeline_linsvm.joblib.",
+  "software": {
+    "python": "3.13.7",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit_learn": "1.9.0"
+  }
+}

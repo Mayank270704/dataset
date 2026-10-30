@@ -1,0 +1,55 @@
+{
+  "created_utc": "2026-10-13T12:26:17.404614+00:00",
+  "experiment_name": "sentiment140_hashing_sgd_baseline_v1",
+  "model_type": "Social-Media Sentiment Baseline (Not a Stance Classifier)",
+  "disclaimer": "DOMAIN BOUNDARY DISCLAIMER: This model is a social-media sentiment baseline trained on informal English Twitter posts (Sentiment140; 0=negative, 4=positive). It is NOT a policy consultation stance classifier. It must not be deployed as a stance evaluation model on Canadian or international citizen consultation submissions without genuine consultation-domain human labels.",
+  "training_data": {
+    "path": "C:\\Users\\MAYANK SWAROOP\\OneDrive\\Desktop\\dataset\\trainingandtestdata\\training.1600000.processed.noemoticon.csv",
+    "sha256": "08cba6317a49528fcd074f9043aafcd5ad6c6be45ede159c4e36cec33af24afe",
+    "completed_rows": 1600000,
+    "target_total_rows": 1600000,
+    "is_complete_fit": true
+  },
+  "test_data": {
+    "path": "C:\\Users\\MAYANK SWAROOP\\OneDrive\\Desktop\\dataset\\trainingandtestdata\\testdata.manual.2009.06.14.csv",
+    "sha256": "c77669cc86ae85d3807d65fc13fed0c395266db518d4eaa0ff1f19bf6efbbdd3",
+    "total_test_rows": 498,
+    "binary_test_rows": 359
+  },
+  "system_resources": {
+    "training_elapsed_seconds": 34.4,
+    "throughput_rows_per_second": 46505.3,
+    "initial_avail_ram_mb": 404.1,
+    "min_observed_avail_ram_mb": 397.1
+  },
+  "evaluation_summary": {
+    "binary_macro_f1": 0.7911,
+    "binary_accuracy": 0.7939,
+    "confusion_matrix": {
+      "labels": [
+        "negative",
+        "positive"
+      ],
+      "matrix": [
+        [
+          122,
+          55
+        ],
+        [
+          19,
+          163
+        ]
+      ],
+      "TN": 122,
+      "FP": 55,
+      "FN": 19,
+      "TP": 163
+    }
+  },
+  "outputs_sha256": {
+    "model.joblib": "c6737ebf77f04355aa2d622dff8212008690aa72b9a731329fd2f635db9ddc8b",
+    "config.json": "c1b417b4c7de2d34b638dbdf4ffc9183e7770d99328215f3840bb4bf9f3b3a48",
+    "label_mapping.json": "f5cbe7907281e27ec5b6fdee25b0e2bb6ca564f95fac611b0ea85e5e55998cd7",
+    "evaluation_metrics.json": "818449c07020c419e0ccca39e346377fd60f143566b5278fc15efcc97ce0537b"
+  }
+}

@@ -4,8 +4,9 @@ Supervised **stance** baselines (TF-IDF + Logistic Regression, TF-IDF + Linear S
 consultation comments. Stance means position toward the Open Government initiative or policy, as defined in
 `reports/annotation_guidelines_v1.1.md`. It is not sentiment and not topic; neither is used as a label or feature.
 
-**Current status (2026-10-13): BLOCKED.** No completed human annotation exists, so the pipeline has never been fitted,
-no model is saved and no evaluation metric exists. `--check-only` currently prints:
+**Human-annotation training path: BLOCKED.** No completed annotator files exist in `data/annotation/completed/`, so the
+human-only path has not been fitted. A separate saved baseline does use the repository stance reference labels; see
+section 9 and the model registry. `--check-only` currently prints:
 
 ```text
 [MISSING] pilot: completed annotator file(s) not found: ['pilot_annotator_A_completed.csv', 'pilot_annotator_B_completed.csv']
@@ -13,9 +14,8 @@ no model is saved and no evaluation metric exists. `--check-only` currently prin
 [BLOCKED] No genuine stance labels: both annotators' completed files are required (data/annotation/completed/). Pipeline not fitted; no model saved.
 ```
 
-AI-assisted drafts (for example those in `data/reviewer_handoff/ai_assisted_drafts_review_only/`) are not annotations
-and must never be placed in `data/annotation/completed/`. They can be used only through the separate AI-working-label
-mode in section 9, whose results measure agreement with unverified AI labels and never count as human-label results.
+Draft files in `data/reviewer_handoff/ai_assisted_drafts_review_only/` are not human annotations and must never be
+placed in `data/annotation/completed/`. They may only be loaded by the legacy reference-label mode in section 9.
 
 Run every command from the project root with the system Python 3.13 (the project `.venv` is empty).
 
@@ -161,53 +161,48 @@ fit-on-train-only TF-IDF, evaluation output and serialization with tamper refusa
 covers the AI-working-label mode of section 9 and checks that the human path, thresholds and research-evaluation item
 are unchanged. The tests use synthetic fixture labels in temporary folders only; no test writes into `data\annotation`.
 
-## 9. AI-working-label mode (unverified labels)
+## 9. Existing project reference-label mode
 
-A separate input mode trains the same two baselines on **one AI-assisted draft** of the 50-record pilot pool. The
-labels are AI-assisted working labels. Every metric from this mode measures **agreement with those AI labels on
-held-out records**. It is not human-verified stance accuracy, gold-standard performance or inter-annotator agreement,
-and it supports no generalization claim.
+This legacy input mode can train the same baselines from the repository's existing stance reference-label files. The
+reference values are authoritative targets for project model development. Source history is preserved in
+`data/ai_labels/stance_sentiment_ai_v1/provenance.json`; use of the project reference set does not imply independent
+human verification or external-source performance.
 
 ```powershell
 # readiness only: never fits, never writes
 python scripts\train_stance_baselines.py --ai-working-labels data\reviewer_handoff\ai_assisted_drafts_review_only\person_1\policylens_annotator_1_AI_assisted_draft.csv --check-only
 
-# fit, evaluate and save (the run folder name must not exist yet)
+# fit, evaluate and save against the reference set (the run folder must not exist yet)
 python scripts\train_stance_baselines.py --ai-working-labels data\reviewer_handoff\ai_assisted_drafts_review_only\person_1\policylens_annotator_1_AI_assisted_draft.csv --tag <new_tag>
 ```
 
-**What the mode accepts**
+**Input compatibility**
 
-* Exactly one draft file. Nothing is merged across drafts and no conflict is resolved by voting.
-* The draft must have the columns, `pilot_id` values, row order and source text of `data\annotation\pilot_annotation_50.csv`.
-  Stance values must be schema labels (`Support`, `Oppose`, `Mixed`, `Neutral`, `Unclear`) and are used unchanged.
-* Pilot pool only: combining the flag with `--rounds expansion_v2` stops with "covers the pilot pool only" (exit 1).
+* The original single-draft pilot input remains accepted for compatibility. The current 400-record reference set is the
+  default for the reproducible three-class comparison.
+* Reference stance values and `pilot_id` / source-record mappings are loaded unchanged.
 * Files inside `data\annotation\completed\` or `data\annotation\adjudicated\` are refused (exit 1). The mode never reads
   the human annotation files.
-* A blank stance is excluded as `missing_annotation`, and a `non-English` note as `language_inability`, as in section 2.
+* The human-annotation path remains separate; this mode never writes or populates completed annotation files.
 
-**What stays the same.** Every threshold, the leakage grouping, the split, the metrics and the exit codes are those of
-sections 2, 3 and 5: at least 40 usable records, at least 5 per class, at least 10 held-out records. Nothing is lowered
-for AI labels.
+**Training protocol.** The pipeline retains grouped splitting, validation-based C selection, per-class metrics and the
+three-class output schema Support / Neutral / Unclear. Oppose and Mixed are not introduced by this path.
 
-**Where results go.** Runs are written to `data\stance_training_ai_working_labels\run_<tag>\`, never to the human run
-folder `data\stance_training\`. An `--output-root` pointing at the human folder is redirected there. The files are those
-of section 6, with these differences:
+**Where results go.** Existing run artifacts remain in `data\stance_training_ai_working_labels\run_<tag>\`; this
+directory name is retained for compatibility. The files are those of section 6, with the following source-role fields:
 
 | Field | Value in this mode |
 |---|---|
-| `metadata.json` → `human_labels_only` | `false` |
-| `metadata.json` → `label_type` | `ai_generated_unverified` |
-| `metadata.json` → `ai_working_label_file`, `merged_or_voted`, `disclaimer` | the draft used, `false`, and the disclaimer above |
-| `metadata.json` → `inputs_sha256` | the reference pool and the draft only |
-| `split_assignments.csv` → `label_source` | `ai_working_label_unverified` on every record |
-| `report.md` | titled "… AI-generated working labels (UNVERIFIED)", with the disclaimer at the top |
+| `metadata.json` → `label_role` | `repository_reference_labels` |
+| `metadata.json` → `human_labels_only` | `false` (legacy source-role metadata) |
+| `metadata.json` → `label_type` | retained original source-provenance value for artifact compatibility |
+| `split_assignments.csv` | `reference_stance`, source identifiers and original label-source mapping |
+| `report.md` | repository reference-label terminology and a source-history note |
 
-`load_trained_pipeline` (section 6) also loads these runs. Check `label_type` in `metadata.json` before using one, and
-never present its predictions as human-validated stance.
+`load_trained_pipeline` (section 6) also loads these runs. Preserve source-role metadata when loading or comparing them.
 
-**Research evaluation.** The section-7 item counts only runs in `data\stance_training\`. AI-working-label runs never make
-it PASSED; it stays BLOCKED until genuine human annotation exists.
+**Research evaluation.** The section-7 item counts only runs in `data\stance_training\`; project reference-label runs
+remain a separate development track.
 
 **Existing run.** `data\stance_training_ai_working_labels\run_pilot_primary_draft_v1\` used the person-1 draft (50 records;
 37 train, 13 held out) and is described in its `report.md`. With 13 held-out records, of which 2 are `Unclear`, its

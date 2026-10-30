@@ -1,0 +1,25 @@
+{
+  "rows": 360,
+  "class_counts": {
+    "Support": 120,
+    "Neutral": 120,
+    "Unclear": 120
+  },
+  "unique_texts": 360,
+  "duplicate_texts": 0,
+  "unclear_reasons": {
+    "off_topic": 46,
+    "insufficient_context": 38,
+    "fragment": 36
+  },
+  "disabled_v4_templates": {
+    "unclear_ambiguity_1": "Explicitly combines support for openness with rejection of publishing records; this may be Mixed under the guideline.",
+    "unclear_ambiguity_2": "Could be Support if the caveat is about implementation rather than the stance target.",
+    "unclear_ambiguity_3": "Directly contradictory support and opposition; no stable intended label is evident.",
+    "unclear_ambiguity_4": "Semantically awkward wording can imply Support rather than Unclear.",
+    "unclear_language_fr_1": "Annotator reading ability is not visible in the comment text.",
+    "unclear_language_fr_2": "Annotator reading ability is not visible in the comment text.",
+    "unclear_language_fr_3": "Annotator reading ability is not visible in the comment text.",
+    "unclear_language_fr_4": "Annotator reading ability is not visible in the comment text."
+  }
+}

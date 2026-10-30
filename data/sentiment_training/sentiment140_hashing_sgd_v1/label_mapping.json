@@ -1,0 +1,11 @@
+{
+  "raw_to_class_name": {
+    "0": "negative",
+    "4": "positive"
+  },
+  "binary_int_to_name": {
+    "0": "negative",
+    "1": "positive"
+  },
+  "neutral_handling": "Neutral (2) kept untouched in manual test set; not mapped during training."
+}

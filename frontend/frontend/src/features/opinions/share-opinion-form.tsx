@@ -4,7 +4,7 @@ import React, { useState, useSyncExternalStore } from "react";
 import { Send, AlertTriangle, Lock, MessageSquare, HelpCircle, Bot, Loader2 } from "lucide-react";
 import { postApi } from "@/lib/api";
 
-type AiStanceResult = {
+type StanceSuggestionResult = {
   final_stance: string | null;
   stance_raw: string | null;
   sentiment_prediction: string | null;
@@ -16,12 +16,11 @@ type V2InferenceResponse = {
   component: "final_stance_inference";
   model: "linsvm";
   human_validated: false;
-  pipeline: "FinalStancePredictor (heuristic_oppose)";
-  data: Array<AiStanceResult & { input_status: "ok" | "too_short_or_empty" }>;
+  pipeline: "FinalStancePredictor (direct three-class stance)";
+  data: Array<StanceSuggestionResult & { input_status: "ok" | "too_short_or_empty" }>;
 };
 
-const STANCE_LABELS = new Set(["Support", "Oppose", "Neutral", "Unclear"]);
-const SENTIMENT_LABELS = new Set(["negative", "positive"]);
+const STANCE_LABELS = new Set(["Support", "Neutral", "Unclear"]);
 
 function isV2InferenceResponse(value: unknown): value is V2InferenceResponse {
   if (!value || typeof value !== "object") return false;
@@ -30,7 +29,7 @@ function isV2InferenceResponse(value: unknown): value is V2InferenceResponse {
     response.component !== "final_stance_inference" ||
     response.model !== "linsvm" ||
     response.human_validated !== false ||
-    response.pipeline !== "FinalStancePredictor (heuristic_oppose)" ||
+    response.pipeline !== "FinalStancePredictor (direct three-class stance)" ||
     !Array.isArray(response.data) ||
     response.data.length !== 1
   ) return false;
@@ -40,11 +39,10 @@ function isV2InferenceResponse(value: unknown): value is V2InferenceResponse {
     row &&
     (row.input_status === "ok" || row.input_status === "too_short_or_empty") &&
     (row.final_stance === null || (typeof row.final_stance === "string" && STANCE_LABELS.has(row.final_stance))) &&
-    (row.stance_raw === null || row.stance_raw === "Support" || row.stance_raw === "Neutral" || row.stance_raw === "Unclear") &&
-    (row.sentiment_prediction === null || (typeof row.sentiment_prediction === "string" && SENTIMENT_LABELS.has(row.sentiment_prediction))) &&
-    (row.prediction_method === null || row.prediction_method === "stance_model_direct" || row.prediction_method === "heuristic_oppose") &&
-    (row.sentiment_model_source === null || typeof row.sentiment_model_source === "string") &&
-    typeof row.disclaimer === "string" && row.disclaimer.includes("HEURISTIC DISCLAIMER")
+    (row.stance_raw === null || (typeof row.stance_raw === "string" && STANCE_LABELS.has(row.stance_raw))) &&
+    row.sentiment_prediction === null && row.sentiment_model_source === null &&
+    (row.prediction_method === null || row.prediction_method === "stance_model_direct") &&
+  typeof row.disclaimer === "string" && row.disclaimer.includes("reference labels")
   );
 }
 
@@ -84,9 +82,9 @@ export function ShareOpinionForm({
     status: "idle" | "local" | "error";
     message: string;
   }>({ status: "idle", message: "" });
-  const [aiResult, setAiResult] = useState<AiStanceResult | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState("");
+  const [stanceSuggestion, setStanceSuggestion] = useState<StanceSuggestionResult | null>(null);
+  const [stanceLoading, setStanceLoading] = useState(false);
+  const [stanceError, setStanceError] = useState("");
 
   const currentClock = useSyncExternalStore(subscribeToClock, getClientNow, getServerNow);
 
@@ -151,9 +149,9 @@ export function ShareOpinionForm({
       message: "Preview only: this comment is shown for this page session. It was not sent to the Ministry or saved to a database."
     });
     setCommentText("");
-    setAiResult(null);
-    setAiError("");
-    setAiLoading(true);
+    setStanceSuggestion(null);
+    setStanceError("");
+    setStanceLoading(true);
     try {
       const raw = await postApi<unknown>("/api/inference/stance", {
         model: "linsvm",
@@ -164,7 +162,7 @@ export function ShareOpinionForm({
       }
       const row = raw.data[0];
       if (row.input_status === "ok") {
-        setAiResult({
+        setStanceSuggestion({
           final_stance: row.final_stance,
           stance_raw: row.stance_raw,
           sentiment_prediction: row.sentiment_prediction,
@@ -173,12 +171,12 @@ export function ShareOpinionForm({
           disclaimer: row.disclaimer,
         });
       } else {
-        setAiError("The model could not produce a suggestion for this comment.");
+        setStanceError("The model could not produce a suggestion for this comment.");
       }
     } catch (err) {
-      setAiError((err as Error).message || "The inference API is unavailable.");
+      setStanceError((err as Error).message || "The inference API is unavailable.");
     } finally {
-      setAiLoading(false);
+      setStanceLoading(false);
     }
   };
 
@@ -280,45 +278,37 @@ export function ShareOpinionForm({
           </div>
         )}
 
-        {aiLoading && (
+        {stanceLoading && (
           <div className="rounded-lg border border-[#e5e7eb] bg-[#f9fafb] p-3.5 text-[13px] text-[#4b5563] flex items-center gap-2">
             <Loader2 size={15} className="animate-spin text-[#143454]" />
-            <span>Running the saved LinearSVM stance model and heuristic Oppose step…</span>
+            <span>Running the saved three-class stance model…</span>
           </div>
         )}
 
-        {aiError && (
+        {stanceError && (
           <div className="rounded-lg border border-[#fca5a5] bg-[#fef2f2] p-3.5 text-[13px] text-[#991b1b] flex items-start gap-2">
             <AlertTriangle size={15} className="shrink-0 mt-0.5" />
-            <span>AI model suggestion unavailable: {aiError}</span>
+            <span>Stance suggestion unavailable: {stanceError}</span>
           </div>
         )}
 
-        {aiResult && (
+        {stanceSuggestion && (
           <div className="rounded-lg border border-[#d6e0ea] bg-[#f0f4f8] p-3.5 text-[13px] text-[#143454] space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold">
               <Bot size={15} className="text-[#E87518]" />
-              <span>AI stance suggestion (provisional, not validated)</span>
+              <span>Model stance suggestion (provisional)</span>
             </div>
             <p>
-              Stance: <strong>{aiResult.final_stance ?? "—"}</strong> · Sentiment:{" "}
-              <strong>{aiResult.sentiment_prediction ?? "—"}</strong> · method:{" "}
-              <code className="text-[12px]">{aiResult.prediction_method}</code>
+              Stance: <strong>{stanceSuggestion.final_stance ?? "—"}</strong>
             </p>
-            {aiResult.final_stance === "Oppose" && (
-              <p className="rounded border border-amber-200 bg-amber-50 p-2 text-[11px] font-semibold text-amber-950">
-                Oppose is a heuristic result, not a trained Oppose class. Raw stance model output: {aiResult.stance_raw ?? "unavailable"}.
-              </p>
-            )}
-            <p className="text-[11px] text-[#475569]">Sentiment source: {aiResult.sentiment_model_source ?? "unavailable"}. Sentiment is tone, not policy stance.</p>
-            <p className="text-[11px] leading-relaxed text-[#475569]">{aiResult.disclaimer}</p>
+            <p className="text-[11px] leading-relaxed text-[#475569]">{stanceSuggestion.disclaimer}</p>
           </div>
         )}
 
         <div className="flex items-center justify-end pt-1">
           <button
             type="submit"
-            disabled={isFormDisabled || aiLoading || commentText.trim().length < 10}
+            disabled={isFormDisabled || stanceLoading || commentText.trim().length < 10}
             className="inline-flex items-center gap-1.5 rounded-lg bg-[#143454] px-4 py-2.5 text-[13px] font-bold text-white shadow-xs hover:bg-[#0e2a47] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
             <Send size={14} /><span>Add Preview Comment</span>

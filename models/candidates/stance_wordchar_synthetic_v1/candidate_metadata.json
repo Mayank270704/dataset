@@ -1,0 +1,61 @@
+{
+  "candidate_version": "stance_wordchar_synthetic_v1",
+  "status": "versioned_candidate_not_deployed",
+  "deployed": false,
+  "production_route_unchanged": true,
+  "production_artifact_sha256": "5078100cca85e7cd6410a61c7d5738d6c28c51f78d5b2fed43ce08f79a735843",
+  "selection_basis": "v4 validation selected ratio_0.5 and C=1.0 balanced; no development-test metric used to select settings",
+  "cv_staging_gate": {
+    "production_recipe_word_only": {
+      "accuracy_delta_mean": 0.0301,
+      "macro_f1_delta_mean": 0.0643,
+      "macro_f1_delta_sd": 0.0435,
+      "macro_f1_fold_wins": 14,
+      "macro_f1_fold_ties": 0,
+      "macro_f1_fold_losses": 1
+    },
+    "word_char_original_only": {
+      "accuracy_delta_mean": 0.0218,
+      "macro_f1_delta_mean": 0.0387,
+      "macro_f1_delta_sd": 0.0391,
+      "macro_f1_fold_wins": 12,
+      "macro_f1_fold_ties": 0,
+      "macro_f1_fold_losses": 3
+    }
+  },
+  "cv_is_independent_evaluation": false,
+  "model_configuration": {
+    "kind": "word_char_linsvm",
+    "C": 1.0,
+    "class_weight": "balanced"
+  },
+  "labels": [
+    "Support",
+    "Neutral",
+    "Unclear"
+  ],
+  "training_counts": {
+    "original_reference_records": 399,
+    "original_by_class": {
+      "Support": 140,
+      "Neutral": 219,
+      "Unclear": 40
+    },
+    "synthetic_total": 200,
+    "synthetic_by_class": {
+      "Support": 67,
+      "Neutral": 67,
+      "Unclear": 66
+    },
+    "synthetic_to_original_ratio": 0.5012531328320802
+  },
+  "provenance": "Synthetic examples are separately tagged in training_manifest.jsonl. Original labels and source mappings were read-only.",
+  "evaluation_limitation": "All available reference records were used to fit this candidate and the pool was previously exposed during development. No independent or unseen-source test result is claimed.",
+  "rollback": "No rollout occurred. The application still loads data/stance_training_ai_working_labels/run_pool400_ai_v1_3class/pipeline_linsvm.joblib. Rollback requires no action; keep that route unchanged unless a later reviewed deployment explicitly switches it.",
+  "inputs_sha256": {
+    "reference_labels": "0b082f5b86457bb52f6178b8538c5120eb3808fdf842f19d1e22cb63cb0ab670",
+    "v4_synthetic_rows": "f86e59f118a5b1104f35a6af6f6610ac3ebc936dc6c90afd5aa3eaf63b2c785b"
+  },
+  "artifact_sha256": "5e3710421b6714cc5b90613db557e338f808ec30e5e663d25deed7b45988c431",
+  "artifact_bytes": 477599
+}

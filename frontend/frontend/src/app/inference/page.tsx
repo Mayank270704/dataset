@@ -50,10 +50,49 @@ type V2Response = {
 };
 
 type InferenceResponse = V1Response | V2Response;
+type ContextStagingRow = {
+  item_index: number;
+  input_status: string;
+  final_stance: "Support" | "Neutral" | "Unclear" | null;
+  stance_margin: number | null;
+  question_missing: boolean;
+  context_missing: boolean;
+  language_status: string;
+  disclaimer: string;
+};
+type ContextStagingResponse = {
+  component: "context_staging_inference";
+  kind: string;
+  candidate: string;
+  human_validated: false;
+  labels_supported: string[];
+  language_policy: string;
+  caveats: string[];
+  data: ContextStagingRow[];
+};
+type FiveClassStagingRow = {
+  item_index: number;
+  input_status: string;
+  final_stance: "Support" | "Neutral" | "Oppose" | "Mixed" | "Unclear" | null;
+  stance_margin: number | null;
+  question_missing: boolean;
+  context_missing: boolean;
+  disclaimer: string;
+};
+type FiveClassStagingResponse = {
+  component: "five_class_stance_staging_inference";
+  kind: string;
+  candidate: string;
+  human_validated: false;
+  labels_supported: string[];
+  caveats: string[];
+  data: FiveClassStagingRow[];
+};
 
 const STANCE_COLORS: Record<string, string> = {
   Support: "bg-emerald-50 text-emerald-800 border-emerald-200",
   Oppose: "bg-red-50 text-red-700 border-red-200",
+  Mixed: "bg-amber-50 text-amber-800 border-amber-200",
   Neutral: "bg-slate-100 text-slate-700 border-slate-200",
   Unclear: "bg-slate-100 text-slate-500 border-slate-200",
 };
@@ -78,6 +117,19 @@ export default function InferencePage() {
   const [result, setResult] = useState<InferenceResponse | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [stagingQuestion, setStagingQuestion] = useState("");
+  const [stagingContext, setStagingContext] = useState("");
+  const [stagingComment, setStagingComment] = useState("");
+  const [stagingLanguage, setStagingLanguage] = useState("");
+  const [stagingResult, setStagingResult] = useState<ContextStagingResponse | null>(null);
+  const [stagingError, setStagingError] = useState("");
+  const [stagingLoading, setStagingLoading] = useState(false);
+  const [fiveQuestion, setFiveQuestion] = useState("");
+  const [fiveContext, setFiveContext] = useState("");
+  const [fiveComment, setFiveComment] = useState("");
+  const [fiveResult, setFiveResult] = useState<FiveClassStagingResponse | null>(null);
+  const [fiveError, setFiveError] = useState("");
+  const [fiveLoading, setFiveLoading] = useState(false);
 
   async function runInference() {
     const lines = texts
@@ -110,6 +162,45 @@ export default function InferencePage() {
     void runInference();
   }
 
+  async function runContextStaging(e: FormEvent) {
+    e.preventDefault();
+    setStagingLoading(true);
+    setStagingError("");
+    setStagingResult(null);
+    try {
+      const response = await postApi<ContextStagingResponse>("/api/inference/stance/context-staging", {
+        items: [{
+          question: stagingQuestion,
+          context: stagingContext,
+          comment: stagingComment,
+          ...(stagingLanguage.trim() ? { language: stagingLanguage.trim() } : {}),
+        }],
+      });
+      setStagingResult(response);
+    } catch (x) {
+      setStagingError((x as Error).message || "The context staging request failed.");
+    } finally {
+      setStagingLoading(false);
+    }
+  }
+
+  async function runFiveClassStaging(e: FormEvent) {
+    e.preventDefault();
+    setFiveLoading(true);
+    setFiveError("");
+    setFiveResult(null);
+    try {
+      const response = await postApi<FiveClassStagingResponse>("/api/inference/stance/five-class-staging", {
+        items: [{ question: fiveQuestion, context: fiveContext, comment: fiveComment }],
+      });
+      setFiveResult(response);
+    } catch (x) {
+      setFiveError((x as Error).message || "The five-class staging request failed.");
+    } finally {
+      setFiveLoading(false);
+    }
+  }
+
   const lineCount = texts.split("\n").filter(l => l.trim()).length;
 
   return (
@@ -120,7 +211,7 @@ export default function InferencePage() {
         PolicyLens studies how people respond to Canadian federal Open Government consultations.
         This page runs the project&apos;s saved TF-IDF baseline models directly on text you enter
         below. Results are <strong>provisional suggestions</strong>, not ground truth — the
-        training labels were AI-generated working labels, not human-verified.
+        training targets are the repository reference labels; results outside this dataset are not established.
       </p>
 
       {/* Mandatory caveats — always visible */}
@@ -128,8 +219,8 @@ export default function InferencePage() {
         <p className="font-semibold mb-1">Critical limitations — must read before use</p>
         <ul className="list-disc list-inside space-y-0.5">
           <li><strong>Standard model:</strong> outputs Support, Neutral, or Unclear only — it cannot predict Oppose.</li>
-          <li><strong>Heuristic Oppose option:</strong> a separate, documented rule (negative sentiment + non-Support stance) can flag Oppose, but it is NOT a validated Oppose classifier — see the disclaimer shown with its results.</li>
-          <li>Training labels are AI-generated; they are not human-verified ground truth.</li>
+          <li><strong>Supported stance classes:</strong> this model recognizes Support, Neutral and Unclear. Oppose and Mixed are unavailable because the saved model has no reliable training examples for them.</li>
+          <li>Evaluation measures agreement with the repository reference labels; it does not establish performance on other consultation sources.</li>
           <li>Decision margins are not probabilities and are not calibrated confidence scores.</li>
           <li>A previously recorded failure classified a strongly opposing statement as Support.</li>
           <li>Models were trained on ~400 Canadian consultation comments; coverage of other domains/languages is unknown.</li>
@@ -189,7 +280,7 @@ export default function InferencePage() {
               onChange={e => setIncludeOpposeHeuristic(e.target.checked)}
               className="h-4 w-4 rounded border-slate-300"
             />
-            Include heuristic Oppose detection (experimental, unvalidated — see disclaimer)
+            Use direct three-class stance inference (sentiment is not used for stance)
           </label>
           <button
             type="submit"
@@ -244,12 +335,7 @@ export default function InferencePage() {
                       <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${STANCE_COLORS[row.stance_suggestion || ""] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
                         {row.stance_suggestion ?? "—"}
                       </span>
-                      <p className="mt-2 text-xs text-slate-400">
-                        Decision margin: {row.stance_margin !== null ? row.stance_margin?.toFixed(4) : "—"}
-                        {" "}· <em>not a probability</em>
-                      </p>
                       <p className="mt-1 text-[10px] text-slate-400">Labels: Support · Neutral · Unclear only. Cannot predict Oppose.</p>
-                      <p className="mt-1 text-[10px] text-slate-400">Prediction method: stance_model_direct · source: {row.stance_label_source}</p>
                     </div>
 
                     <div className="rounded-xl border p-3">
@@ -257,10 +343,6 @@ export default function InferencePage() {
                       <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${SENTIMENT_COLORS[row.sentiment_suggestion || ""] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
                         {row.sentiment_suggestion ?? "—"}
                       </span>
-                      <p className="mt-2 text-xs text-slate-400">
-                        Decision margin: {row.sentiment_margin !== null ? row.sentiment_margin?.toFixed(4) : "—"}
-                        {" "}· <em>not a probability</em>
-                      </p>
                       <p className="mt-1 text-[10px] text-slate-400">Tone only — distinct from stance.</p>
                     </div>
                   </div>
@@ -290,7 +372,7 @@ export default function InferencePage() {
 
           <section className="mt-5 space-y-4">
             <h2 className="text-lg font-semibold text-slate-900">
-              Results (heuristic Oppose-aware) — model: <code className="text-sm">{result.model}</code>
+              Results (direct three-class stance) — model: <code className="text-sm">{result.model}</code>
             </h2>
             {result.data.map((row, i) => (
               <article key={i} className="rounded-2xl border border-slate-200 bg-white p-5">
@@ -305,21 +387,7 @@ export default function InferencePage() {
                       <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${STANCE_COLORS[row.final_stance || ""] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
                         {row.final_stance ?? "—"}
                       </span>
-                      {row.prediction_method === "heuristic_oppose" && (
-                        <span className="ml-2 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-red-700">
-                          heuristic, not a validated classification
-                        </span>
-                      )}
-                      <p className="mt-2 text-xs text-slate-400">
-                        Raw stance model output: {row.stance_raw ?? "—"} · decision margin{" "}
-                        {row.stance_margin !== null ? row.stance_margin?.toFixed(4) : "—"} · <em>not a probability</em>
-                      </p>
-                      <p className="mt-1 text-xs text-slate-400">
-                        Sentiment input ({row.sentiment_model_source}): {row.sentiment_prediction ?? "—"}
-                      </p>
-                      <p className="mt-2 text-[11px] font-semibold text-slate-600">
-                        Prediction method: <code>{row.prediction_method}</code> · label source: {row.stance_label_source}
-                      </p>
+                      <p className="mt-2 text-xs text-slate-500">Suggestion trained against repository stance reference labels; external performance is not established.</p>
                     </div>
                     <p className="mt-2 rounded-lg bg-amber-50 p-2 text-[11px] leading-5 text-amber-900">{row.disclaimer}</p>
                   </div>
@@ -329,6 +397,82 @@ export default function InferencePage() {
           </section>
         </>
       )}
+
+      <section className="mt-10 rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50/40 p-5">
+        <p className="text-xs font-bold uppercase tracking-wide text-indigo-800">Separate staging prototype</p>
+        <h2 className="mt-1 text-xl font-bold text-slate-900">Question and context aware stance</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Uses a versioned staging candidate with Support, Neutral, and Unclear outputs. It does not replace the production model. Language metadata is accepted for testing but ignored by the model.
+        </p>
+        <form onSubmit={runContextStaging} className="mt-4 grid gap-4">
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">
+            Consultation question (optional, max 2,000 characters)
+            <textarea value={stagingQuestion} onChange={e => setStagingQuestion(e.target.value)} maxLength={2000} rows={2} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">
+            Additional context (optional, max 5,000 characters)
+            <textarea value={stagingContext} onChange={e => setStagingContext(e.target.value)} maxLength={5000} rows={3} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">
+            Comment (max 5,000 characters; fewer than 3 non-space characters returns no prediction)
+            <textarea value={stagingComment} onChange={e => setStagingComment(e.target.value)} maxLength={5000} rows={4} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono font-normal" />
+          </label>
+          <label className="grid max-w-sm gap-1 text-sm font-semibold text-slate-700">
+            Language metadata (optional; ignored; unsupported values are not model features)
+            <input value={stagingLanguage} onChange={e => setStagingLanguage(e.target.value)} maxLength={100} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal" placeholder="e.g. Klingon" />
+          </label>
+          <button type="submit" disabled={stagingLoading} className="w-fit rounded-lg bg-indigo-800 px-5 py-2 text-sm font-semibold text-white disabled:opacity-60">
+            {stagingLoading ? "Running staging model…" : "Run staging prototype"}
+          </button>
+        </form>
+        {stagingError && <p role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-800">{stagingError}</p>}
+        {stagingResult && stagingResult.data.map(row => (
+          <article key={row.item_index} className="mt-4 rounded-xl border border-indigo-200 bg-white p-4">
+            <p className="text-sm font-semibold text-slate-700">Staging result</p>
+            {row.input_status === "ok" ? (
+              <p className="mt-2 inline-block rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 font-semibold text-indigo-900">{row.final_stance}</p>
+            ) : (
+              <p className="mt-2 text-sm text-slate-600">No stance prediction: comment is empty or too short.</p>
+            )}
+            <p className="mt-2 text-xs text-slate-600">Question missing: {row.question_missing ? "yes" : "no"}; context missing: {row.context_missing ? "yes" : "no"}; language: {row.language_status}.</p>
+            <p className="mt-2 text-xs text-slate-500">{row.disclaimer}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-8 rounded-2xl border-2 border-dashed border-violet-300 bg-violet-50/40 p-5">
+        <p className="text-xs font-bold uppercase tracking-wide text-violet-800">Five-class synthetic staging candidate</p>
+        <h2 className="mt-1 text-xl font-bold text-slate-900">Expanded stance schema (staging only)</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Candidate {"stance_context_wordchar_5class_synth_v1"} adds Oppose and Mixed using explicitly synthetic training examples. It is not human validated; current original grouped evaluation has no Mixed examples and only one Oppose record, so those classes&apos; real-world performance is unknown. Production remains on its existing model.
+        </p>
+        <form onSubmit={runFiveClassStaging} className="mt-4 grid gap-4">
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">Consultation question (optional)
+            <textarea value={fiveQuestion} onChange={e => setFiveQuestion(e.target.value)} maxLength={2000} rows={2} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">Additional context (optional)
+            <textarea value={fiveContext} onChange={e => setFiveContext(e.target.value)} maxLength={5000} rows={3} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-normal" />
+          </label>
+          <label className="grid gap-1 text-sm font-semibold text-slate-700">Comment (required; fewer than 3 non-space characters returns no prediction)
+            <textarea value={fiveComment} onChange={e => setFiveComment(e.target.value)} maxLength={5000} rows={4} className="rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono font-normal" />
+          </label>
+          <button type="submit" disabled={fiveLoading} className="w-fit rounded-lg bg-violet-800 px-5 py-2 text-sm font-semibold text-white disabled:opacity-60">
+            {fiveLoading ? "Running five-class staging model…" : "Run five-class staging prototype"}
+          </button>
+        </form>
+        {fiveError && <p role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-800">{fiveError}</p>}
+        {fiveResult?.caveats.map(caveat => <p key={caveat} className="mt-2 text-xs leading-5 text-amber-900">{caveat}</p>)}
+        {fiveResult?.data.map(row => (
+          <article key={row.item_index} className="mt-4 rounded-xl border border-violet-200 bg-white p-4">
+            <p className="text-sm font-semibold text-slate-700">Staging result</p>
+            {row.input_status === "ok" ? (
+              <p className={`mt-2 inline-block rounded-full border px-3 py-1 font-semibold ${STANCE_COLORS[row.final_stance || ""] || "bg-slate-50 text-slate-700 border-slate-200"}`}>{row.final_stance}</p>
+            ) : <p className="mt-2 text-sm text-slate-600">No stance prediction: comment is empty or too short.</p>}
+            <p className="mt-2 text-xs text-slate-600">Question missing: {row.question_missing ? "yes" : "no"}; context missing: {row.context_missing ? "yes" : "no"}.</p>
+            <p className="mt-2 text-xs text-slate-500">{row.disclaimer}</p>
+          </article>
+        ))}
+      </section>
     </main>
   );
 }

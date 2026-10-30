@@ -1,0 +1,41 @@
+{
+  "label_set": "stance_sentiment_ai_v1",
+  "status": "AI-generated working labels. NOT human-verified, NOT gold, NOT adjudicated. Authorised by the project owner as the working supervision source while human annotations are unavailable.",
+  "created_utc": "2026-10-13T21:24:40+00:00",
+  "records": 400,
+  "stance": {
+    "guidelines": "reports/annotation_guidelines_v1.1.md (stance toward Open Government; criticism alone never Oppose; French labelled with the standard rules by a French-reading labeller, section 7)",
+    "pilot_50": {
+      "source": "data/reviewer_handoff/ai_assisted_drafts_review_only/person_1/policylens_annotator_1_AI_assisted_draft.csv",
+      "method": "pre-existing AI-assisted draft designated primary; reused unchanged (no merge, no vote)"
+    },
+    "expansion_350": {
+      "source": "data/ai_labels/stance_sentiment_ai_v1/raw/ai_labels_expansion_v2_350.csv",
+      "method": "single-pass AI labelling by Claude (model id claude-opus-5-5) inside a Claude Code session, reading each text with its question slug and source language and applying the v1.1 decision order (understandable? -> off-topic -> position). One label per record, no second pass, no human review.",
+      "prompt_version": "guidelines v1.1 decision order + section 5 special cases; session instruction 'AI-label the 350 expansion_v2 records under guidelines v1.1' (2026-10-14)",
+      "consistency_adjustments": "expansion_v2_283 and expansion_v2_345 (session praise) set to Neutral to match draft 1's treatment of thanks/session praise"
+    },
+    "counts_all_400": {
+      "Neutral": 219,
+      "Support": 140,
+      "Unclear": 40,
+      "Oppose": 1
+    }
+  },
+  "sentiment": {
+    "construct": "tone of the text (Positive / Negative / Neutral / Mixed); independent of stance. Negative tone does not imply Oppose.",
+    "method": "same labeller and pass as the expansion stance labels; pilot sentiment labelled in the same session (no prior sentiment draft existed)",
+    "counts_all_400": {
+      "Neutral": 270,
+      "Negative": 73,
+      "Positive": 45,
+      "Mixed": 12
+    }
+  },
+  "known_limitations": [
+    "single AI labeller per record; no inter-annotator agreement exists or can be computed from these labels",
+    "pilot stance labels and expansion labels come from different AI passes",
+    "Oppose has very few records and Mixed none; these classes cannot be trained or evaluated",
+    "labels are judgements about guideline application and may encode systematic AI bias"
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "source_predictions": "reports\\stance_context_staging_v1\\grouped_cv_predictions.jsonl",
+  "prediction_sha256": "935f395c5eb14c4790b95aed558166596287e5c67e2c1fcf4b8b22bd044dfc07",
+  "rows": 1197,
+  "confusion_matrix": [
+    [
+      236,
+      157,
+      27
+    ],
+    [
+      114,
+      528,
+      15
+    ],
+    [
+      50,
+      53,
+      17
+    ]
+  ],
+  "labels_order": [
+    "Support",
+    "Neutral",
+    "Unclear"
+  ],
+  "false_positive_false_negative": {
+    "Support": {
+      "false_positives": 164,
+      "false_negatives": 184
+    },
+    "Neutral": {
+      "false_positives": 210,
+      "false_negatives": 129
+    },
+    "Unclear": {
+      "false_positives": 42,
+      "false_negatives": 103
+    }
+  },
+  "transition_counts": [
+    {
+      "reference": "Support",
+      "predictions": {
+        "Support": {
+          "events": 236,
+          "unique_records": 92
+        },
+        "Neutral": {
+          "events": 157,
+          "unique_records": 63
+        },
+        "Unclear": {
+          "events": 27,
+          "unique_records": 13
+        }
+      }
+    },
+    {
+      "reference": "Neutral",
+      "predictions": {
+        "Support": {
+          "events": 114,
+          "unique_records": 56
+        },
+        "Neutral": {
+          "events": 528,
+          "unique_records": 194
+        },
+        "Unclear": {
+          "events": 15,
+          "unique_records": 9
+        }
+      }
+    },
+    {
+      "reference": "Unclear",
+      "predictions": {
+        "Support": {
+          "events": 50,
+          "unique_records": 20
+        },
+        "Neutral": {
+          "events": 53,
+          "unique_records": 21
+        },
+        "Unclear": {
+          "events": 17,
+          "unique_records": 9
+        }
+      }
+    }
+  ],
+  "unclear_wrong_record_ids": {
+    "Support": [
+      "expansion_v2_010",
+      "expansion_v2_037",
+      "expansion_v2_038",
+      "expansion_v2_045",
+      "expansion_v2_046",
+      "expansion_v2_060",
+      "expansion_v2_064",
+      "expansion_v2_068",
+      "expansion_v2_078",
+      "expansion_v2_080",
+      "expansion_v2_145",
+      "expansion_v2_148",
+      "expansion_v2_155",
+      "expansion_v2_204",
+      "expansion_v2_290",
+      "expansion_v2_337",
+      "pilot_002",
+      "pilot_017",
+      "pilot_021",
+      "pilot_040"
+    ],
+    "Neutral": [
+      "expansion_v2_025",
+      "expansion_v2_028",
+      "expansion_v2_032",
+      "expansion_v2_084",
+      "expansion_v2_132",
+      "expansion_v2_135",
+      "expansion_v2_145",
+      "expansion_v2_155",
+      "expansion_v2_161",
+      "expansion_v2_168",
+      "expansion_v2_218",
+      "expansion_v2_236",
+      "expansion_v2_243",
+      "expansion_v2_278",
+      "expansion_v2_279",
+      "expansion_v2_313",
+      "pilot_015",
+      "pilot_021",
+      "pilot_027",
+      "pilot_030",
+      "pilot_032"
+    ]
+  },
+  "unclear_prediction_stability_across_three_repeats": {
+    "1": 30,
+    "2": 10
+  },
+  "context_missing_rows": 0,
+  "qualitative_hypotheses": {
+    "Support_reference_to_Neutral_prediction": "Support reference comments often phrase a recommendation, question, or criticism without a direct endorsement. The model appears to prefer descriptive or interrogative wording; question/context sometimes frames the comment as an open idea rather than an explicit stance.",
+    "Support_reference_to_Unclear_prediction": "Support reference comments can be short suggestions or proposals with little first-person or endorsement wording. The topic context helps identify subject matter but may not show whether a fragment is intended as support.",
+    "Neutral_reference_to_Support_prediction": "Neutral references include constructive proposals, words such as 'need', 'better', or 'support', and questions. Lexical positivity or recommendation language may be mistaken for taking a side; the prompt often invites ideas rather than a position.",
+    "Neutral_reference_to_Unclear_prediction": "Some references are terse, tangential, or contain uncertainty. In these cases Unclear may be linguistically plausible, though it disagrees with the reference label; broader context does not always clarify the author's position.",
+    "Unclear_reference_to_Support_prediction": "The 20 unique affected records include endorsements of third-party statements, fragments, topic labels, retweets/links, and recommendations. Positive or action-oriented tokens can look supportive even when the author position is not recoverable. Context often identifies a brainstorming topic but does not establish authorship or endorsement.",
+    "Unclear_reference_to_Neutral_prediction": "The 21 unique affected records include topic fragments, unrelated/off-topic text, explicit uncertainty, and mixed or critical statements. The model often defaults to Neutral for non-directional wording; context may explain the topic but cannot resolve missing or ambiguous author intent."
+  },
+  "label_policy": "Reference labels were not modified. Qualitative explanations are hypotheses based on text/context inspection, not established causes."
+}

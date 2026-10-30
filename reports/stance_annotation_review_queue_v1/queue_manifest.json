@@ -1,0 +1,24 @@
+{
+  "reference_input": "data\\ai_labels\\stance_sentiment_ai_v1\\ai_working_labels_pool400.csv",
+  "prediction_input": "C:\\Users\\MAYANK SWAROOP\\OneDrive\\Desktop\\dataset\\reports\\stance_candidate_shared_cv_v2\\shared_fold_predictions.jsonl",
+  "eligible_original_records": 399,
+  "queue_records": 125,
+  "reference_label_counts_in_queue": {
+    "Neutral": 53,
+    "Unclear": 40,
+    "Support": 32
+  },
+  "language_counts_in_queue": {
+    "English": 90,
+    "French": 35
+  },
+  "review_reason_counts": {
+    "production_candidate_oof_disagreement": 70,
+    "reference_unclear_requires_reason_review": 40,
+    "underrepresented_french_review": 35
+  },
+  "reviewer_fields_blank": true,
+  "predictions_are_repeated_grouped_oof_votes": true,
+  "confidence": "Not supplied: source grouped-CV artifact contains no calibrated confidence scores.",
+  "labels_modified": false
+}

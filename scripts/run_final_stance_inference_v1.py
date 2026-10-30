@@ -2,7 +2,7 @@
 """
 scripts/run_final_stance_inference_v1.py
 ========================================
-Standalone reproducible script for the final heuristic stance inference pipeline (v1).
+Standalone reproducible script for direct three-class stance inference.
 
 Usage
 -----
@@ -45,7 +45,7 @@ SMOKE_TEST_TEXTS = [
     "   ",                                                                     # whitespace only
     "ok",                                                                      # too short (2 chars)
     "I strongly support open government data publishing",                      # expected: pos-sentiment, Support
-    "This policy is a terrible waste of money and should be stopped",          # expected: neg-sentiment → Oppose
+    "This policy is a terrible waste of money and should be stopped",          # stance model output; sentiment is not used
     "The meeting was held on Tuesday",                                         # neutral/factual
     "Le gouvernement devrait publier toutes les données sur les contrats publics.",  # French
     "Yeh policy bilkul galat hai",                                             # Hinglish/Hindi-like, negative
@@ -66,12 +66,8 @@ def _build_manifest(out_dir: Path, output_csv: Path, summary_json: Path, model: 
         "script": "scripts/run_final_stance_inference_v1.py",
         "model_variant": model,
         "stance_run": "data/stance_training_ai_working_labels/run_pool400_ai_v1_3class",
-        "sentiment_model": "data/sentiment_training/sentiment140_hashing_sgd_v1",
-        "pipeline": "FinalStancePredictor (heuristic_oppose)",
-        "disclaimer": (
-            "Oppose predictions are heuristic (negative sentiment + non-Support stance); "
-            "not produced by a validated Oppose classifier."
-        ),
+        "pipeline": "FinalStancePredictor (direct three-class stance)",
+        "disclaimer": "Only Support, Neutral and Unclear are trained outputs; labels are AI-generated and unverified.",
         "outputs_sha256": {
             output_csv.name: _sha256_file(output_csv),
             summary_json.name: _sha256_file(summary_json),
@@ -125,7 +121,7 @@ def run_smoke_test(model: str) -> int:
         "sentiment_distribution": valid_df["sentiment_prediction"].value_counts().to_dict(),
         "model_variant": model,
         "note": (
-            "Oppose is a heuristic (negative sentiment + non-Support stance). "
+            "Only Support, Neutral and Unclear are trained outputs. "
             "All stance outputs are AI-working-label approximations."
         ),
     }
@@ -221,7 +217,7 @@ def run_batch(input_csv: str, text_column: str, output_csv: str, model: str) -> 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="PolicyLens final heuristic stance inference pipeline v1.",
+        description="PolicyLens direct three-class stance inference pipeline.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--input", metavar="CSV", help="Path to input CSV file.")

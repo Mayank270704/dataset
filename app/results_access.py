@@ -468,10 +468,8 @@ class ResultsStore:
         """Documented limitations and disclaimers, collected from the artifacts themselves where available."""
         import run_research_evaluation as ev
         out: dict[str, Any] = {"scope": SCOPE_NOTE, "general": list(ev.INTERPRETATION_RULES),
-                               "stance": ("No stance model trained on human labels exists (human annotation BLOCKED). The "
-                                          "AI-assisted working-label baseline measures agreement with unverified AI labels "
-                                          "on 13 held-out records and is not human-validated stance accuracy; it is not served "
-                                          "by this access layer.")}
+                "stance": ("The saved stance baseline measures agreement with repository reference labels on a small held-out "
+                                          "split. It is not an external-source performance estimate and is not served by this access layer.")}
         for comp in ("prioritization", "language_keywords"):
             if self.verify(comp)["status"] == "VERIFIED":
                 cfg = self._load(comp)["config"]

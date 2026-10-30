@@ -16,7 +16,7 @@ GET  /api/evidence/{corpus_id}
 GET  /api/demands[?limit=&offset=]          -- extractive collective-demand candidates
 GET  /api/demands/{candidate_id}            -- one candidate with full evidence
 POST /api/inference/consultation
-POST /api/inference/stance                  -- heuristic 4-label stance pipeline (v2)
+POST /api/inference/stance                  -- direct saved three-class stance model
 """
 from __future__ import annotations
 
@@ -259,7 +259,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         req_path = urlparse(self.path).path
-        if req_path not in {"/api/inference/consultation", "/api/inference/stance"}:
+        if req_path not in {"/api/inference/consultation", "/api/inference/stance",
+                             "/api/inference/stance/context-staging",
+                             "/api/inference/stance/five-class-staging"}:
             self._respond(405, {"error": "read-only API; only consultation/stance inference accepts POST"})
             return
         allowed_origin = os.getenv("POLICYLENS_FRONTEND_ORIGIN", "http://localhost:3000")
@@ -275,6 +277,96 @@ class Handler(BaseHTTPRequestHandler):
             request = json.loads(self.rfile.read(length).decode("utf-8"))
             if not isinstance(request, dict):
                 raise ValueError("JSON body must be an object")
+            if req_path == "/api/inference/stance/five-class-staging":
+                from models.context_stance_features import ContextPredictionInput
+                from models.five_class_stance_inference import FiveClassStancePredictor
+                if set(request) != {"items"}:
+                    raise ValueError("five-class staging accepts only the items field")
+                entries = request.get("items")
+                if not isinstance(entries, list) or not 1 <= len(entries) <= 16:
+                    raise ValueError("items must be an array containing 1 to 16 objects")
+                allowed = {"question", "context", "comment"}
+                items = []
+                for index, entry in enumerate(entries):
+                    if not isinstance(entry, dict):
+                        raise ValueError(f"items[{index}] must be an object")
+                    extra = set(entry) - allowed
+                    if extra:
+                        raise ValueError(f"items[{index}] contains unsupported fields")
+                    if "comment" not in entry:
+                        raise ValueError(f"items[{index}].comment is required")
+                    if not isinstance(entry["comment"], str):
+                        raise ValueError(f"items[{index}].comment must be a string")
+                    item = ContextPredictionInput(entry.get("question"), entry.get("context"), entry["comment"])
+                    item.validate()
+                    items.append(item)
+                cache_key = "five_class_stance_staging_v1"
+                if cache_key not in _PREDICTORS:
+                    _PREDICTORS[cache_key] = FiveClassStancePredictor()
+                rows = _PREDICTORS[cache_key].predict(items).to_dict(orient="records")
+                self._respond(200, {
+                    "component": "five_class_stance_staging_inference",
+                    "kind": "synthetic_candidate_provisional_suggestions",
+                    "candidate": "stance_context_wordchar_5class_synth_v1",
+                    "human_validated": False,
+                    "labels_supported": ["Support", "Neutral", "Oppose", "Mixed", "Unclear"],
+                    "caveats": [
+                        "Separate staging route; production routes and artifact are unchanged.",
+                        "Oppose has only one original reference record and Mixed has none; synthetic training examples do not establish real-world accuracy for these classes.",
+                        "Empty or whitespace comments shorter than three characters return no stance prediction.",
+                        "Missing question/context values use explicit missing-field markers.",
+                        "Decision margins are diagnostics, not calibrated probabilities or confidence.",
+                    ],
+                    "data": rows,
+                })
+                return
+            if req_path == "/api/inference/stance/context-staging":
+                from models.context_stance_features import ContextPredictionInput
+                from models.context_stance_inference import ContextArtifactError, ContextStancePredictor
+                if set(request) != {"items"}:
+                    raise ValueError("context staging accepts only the items field")
+                raw_items = request.get("items")
+                if not isinstance(raw_items, list) or not 1 <= len(raw_items) <= 16:
+                    raise ValueError("items must be an array containing 1 to 16 objects")
+                allowed = {"question", "context", "comment", "language"}
+                items = []
+                for index, entry in enumerate(raw_items):
+                    if not isinstance(entry, dict):
+                        raise ValueError(f"items[{index}] must be an object")
+                    extra = set(entry) - allowed
+                    if extra:
+                        raise ValueError(f"items[{index}] contains unsupported fields")
+                    if "comment" not in entry:
+                        raise ValueError(f"items[{index}].comment is required")
+                    if not isinstance(entry["comment"], str):
+                        raise ValueError(f"items[{index}].comment must be a string")
+                    item = ContextPredictionInput(
+                        question=entry.get("question"), context=entry.get("context"),
+                        comment=entry.get("comment"), language=entry.get("language"),
+                    )
+                    item.validate()
+                    items.append(item)
+                cache_key = "context_staging_v1"
+                if cache_key not in _PREDICTORS:
+                    _PREDICTORS[cache_key] = ContextStancePredictor()
+                result_rows = _PREDICTORS[cache_key].predict(items).to_dict(orient="records")
+                self._respond(200, {
+                    "component": "context_staging_inference",
+                    "kind": "staging_only_provisional_model_suggestions",
+                    "candidate": "stance_context_wordchar_v1",
+                    "human_validated": False,
+                    "labels_supported": ["Support", "Neutral", "Unclear"],
+                    "language_policy": "language metadata is accepted for compatibility but ignored by this model",
+                    "caveats": [
+                        "Staging prototype only; the existing production inference routes are unchanged.",
+                        "Predictions are provisional agreement with repository reference labels, not human-validated accuracy.",
+                        "Margins are diagnostics, not calibrated probabilities or confidence.",
+                        "Empty or whitespace comments of fewer than three characters return no stance prediction.",
+                        "Missing question/context values use explicit missing-field markers; context is optional.",
+                    ],
+                    "data": result_rows,
+                })
+                return
             model = request.get("model", "linsvm")
             texts = request.get("texts")
             if model not in {"linsvm", "logreg"}:
@@ -284,7 +376,7 @@ class Handler(BaseHTTPRequestHandler):
             if any(not isinstance(t, str) or len(t) > 5000 for t in texts):
                 raise ValueError("each text must be a string of at most 5000 characters")
 
-            # Route to FinalStancePredictor (heuristic v2) if requested or on /api/inference/stance
+            # Route to direct stance inference if requested or on /api/inference/stance
             use_v2 = (req_path == "/api/inference/stance" or
                       request.get("pipeline") in {"v2", "final"} or
                       request.get("version") in {"v2", "final"})
@@ -299,13 +391,12 @@ class Handler(BaseHTTPRequestHandler):
                 self._respond(200, {
                     "component": "final_stance_inference", "kind": "provisional_model_suggestions",
                     "model": model, "human_validated": False,
-                    "pipeline": "FinalStancePredictor (heuristic_oppose)",
-                    "label_provenance": "AI-generated working labels + Sentiment140 heuristic Oppose",
+                    "pipeline": "FinalStancePredictor (direct three-class stance)",
+                    "label_provenance": "repository stance reference labels; no sentiment-derived stance classes",
                     "caveats": [
                         "Predictions are provisional suggestions, not ground truth or human-reviewed labels.",
-                        "Oppose is assigned heuristically (negative sentiment + non-Support stance), NOT by a validated Oppose classifier.",
-                        "Sentiment model was trained on Twitter data (Sentiment140); domain transfer to consultations may introduce errors.",
-                        "Decision margins are not probabilities or calibrated confidence.",
+                        "The available artifact recognizes Support, Neutral and Unclear only; Oppose and Mixed are not trained classes.",
+                        "Decision margins are diagnostics, not probabilities or calibrated confidence.",
                         "The models were trained on a 400-record Canadian consultation pool and have limited language/domain coverage.",
                         "Input text is processed in memory for this response and is not written by this endpoint.",
                     ],
@@ -321,12 +412,12 @@ class Handler(BaseHTTPRequestHandler):
             self._respond(200, {
                 "component": "consultation_inference", "kind": "provisional_model_suggestions",
                 "model": model, "human_validated": False,
-                "label_provenance": "AI-generated working labels; not human-verified or gold labels",
+                "label_provenance": "repository stance reference labels",
                 "caveats": [
-                    "Predictions are provisional suggestions, not ground truth or human-reviewed labels.",
+                    "Predictions are provisional suggestions; performance outside the repository reference set is not established.",
                     "Stance and sentiment are separate constructs; sentiment is tone, not stance.",
                     "Decision margins are not probabilities or calibrated confidence.",
-                    "The models were trained on a 400-record Canadian consultation pool and have limited language/domain coverage.",
+                    "The models were trained on the repository consultation reference set; coverage outside it is not established.",
                     "Input text is processed in memory for this response and is not written by this endpoint.",
                 ],
                 "data": rows,
@@ -336,7 +427,7 @@ class Handler(BaseHTTPRequestHandler):
         except ImportError:
             self._respond(503, {"error": "consultation inference dependencies are unavailable"})
         except Exception as exc:
-            if exc.__class__.__name__ == "ArtifactError":
+            if exc.__class__.__name__ in {"ArtifactError", "ContextArtifactError", "FiveClassArtifactError"}:
                 self._respond(503, {"error": "verified inference artifacts unavailable", "detail": str(exc)})
             else:
                 self._respond(500, {"error": "consultation inference failed"})

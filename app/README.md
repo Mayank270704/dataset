@@ -11,8 +11,8 @@ Routes: `GET /api/health`, `/api/stats`, `/api/dataset?q=&source=&limit=&offset=
 `/api/groups/{cluster_id}`, `/api/evidence/{corpus_id}`, `/api/search?q=&source=&top=`, `/api/experiments`,
 and `/api/analysis/status`.
 `POST /api/inference/consultation` accepts 1–16 bounded comment texts and a `linsvm` or `logreg` selector. It
-loads the verified TF-IDF pipelines lazily, returns provisional stance and sentiment suggestions with AI-label
-caveats, and does not persist input text. See `models/INFERENCE_API.md` for exact artifacts, training provenance,
+loads the verified TF-IDF pipelines lazily, returns provisional stance and sentiment suggestions against the project
+reference labels, and does not persist input text. See `models/INFERENCE_API.md` for exact artifacts, source provenance,
 metrics, and known failure modes. The API binds to loopback by default; inference also checks browser `Origin`.
 Corpus, concern and evidence routes require the existing manifest/schema and traceability checks to pass.
 Only public source records in the saved research corpus are served. API filters are bounded and read-only.
@@ -139,8 +139,8 @@ Every data payload has this shape, so panels can render caveats and provenance u
 
 ## Not served
 
-* Stance predictions. No model trained on human labels exists. The AI-assisted working-label baseline measures
-  agreement with unverified AI labels and is deliberately excluded.
+* Stance predictions. The saved baseline is for exploratory research only and is deliberately excluded from these
+  aggregate routes; its reported metrics measure agreement with the project reference labels on a small split.
 * Sentiment-baseline models, which are auxiliary and not stance.
 * Anything requiring a model at request time, such as embedding or clustering new comments. No fitted UMAP or HDBSCAN
   model is saved, and loading an encoder exceeds the memory usually free on this machine.

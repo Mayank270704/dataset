@@ -1,0 +1,20 @@
+{
+  "labels": [
+    "Support",
+    "Neutral",
+    "Unclear"
+  ],
+  "index": {
+    "Support": 0,
+    "Neutral": 1,
+    "Unclear": 2
+  },
+  "schema": [
+    "Support",
+    "Oppose",
+    "Mixed",
+    "Neutral",
+    "Unclear"
+  ],
+  "construct": "stance toward the Open Government initiative/policy (guidelines v1.1); not sentiment, not topic"
+}

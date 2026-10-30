@@ -1,0 +1,14 @@
+{
+  "model_architecture": "HashingVectorizer + SGDClassifier",
+  "n_features": 262144,
+  "ngram_range": [
+    1,
+    2
+  ],
+  "alternate_sign": true,
+  "loss": "log_loss",
+  "penalty": "l2",
+  "alpha": 1e-05,
+  "random_state": 42,
+  "batch_size": 25000
+}

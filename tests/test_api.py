@@ -111,14 +111,13 @@ def test_actual_saved_research_http_workflow():
 
 
 def test_final_stance_inference_route():
-    """POST /api/inference/stance returns heuristic 4-label predictions (v2 pipeline).
+    """POST /api/inference/stance returns direct predictions from the three-class artifact.
 
     Verifies:
     - HTTP 200 with correct component / kind fields
     - human_validated is False
-    - Every row exposes final_stance in {Support, Oppose, Neutral, Unclear}
+    - Every row exposes only trained classes {Support, Neutral, Unclear}
     - Every row carries a disclaimer field (non-empty)
-    - Oppose rows are marked prediction_method == 'heuristic_oppose'
     - Error: unknown model -> 400
     - Error: too many texts (>16) -> 400
     """
@@ -137,22 +136,19 @@ def test_final_stance_inference_route():
             assert resp["component"] == "final_stance_inference"
             assert resp["kind"] == "provisional_model_suggestions"
             assert resp["human_validated"] is False
-            assert "heuristic_oppose" in resp["pipeline"]
+            assert resp["pipeline"] == "FinalStancePredictor (direct three-class stance)"
             assert len(resp["data"]) == 3
-            valid_stances = {"Support", "Oppose", "Neutral", "Unclear"}
+            valid_stances = {"Support", "Neutral", "Unclear"}
             for row in resp["data"]:
                 assert row["final_stance"] in valid_stances, (
                     f"Unexpected final_stance: {row['final_stance']!r}"
                 )
                 assert row["disclaimer"], "disclaimer field must be non-empty"
                 assert row["input_status"] == "ok"
-                if row["final_stance"] == "Oppose":
-                    assert row["prediction_method"] == "heuristic_oppose", (
-                        "Oppose must always be heuristic_oppose"
-                    )
-            # caveats must mention the heuristic nature of Oppose
+                assert row["sentiment_prediction"] is None
+            # Caveats document classes unavailable in this artifact.
             caveat_text = " ".join(resp["caveats"])
-            assert "heuristically" in caveat_text.lower() or "heuristic" in caveat_text.lower()
+            assert "oppose" in caveat_text.lower() and "not trained" in caveat_text.lower()
 
         # Bad model -> 400
         assert post_json(server, "/api/inference/stance", {"model": "badmodel", "texts": ["hi"]})[0] == 400

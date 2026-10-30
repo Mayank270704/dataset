@@ -19,9 +19,8 @@ Subpackages (lazy-loaded)
 Inference modules (lazy-loaded)
 ---------------------------------
   - models.new_comment_inference  : NewCommentPredictor — 3-label stance + 3-label sentiment.
-  - models.stance_inference_v2    : FinalStancePredictor — heuristic 4-label pipeline
-                                    (Support / Oppose / Neutral / Unclear).
-                                    NOTE: Oppose is a heuristic label, NOT a validated classifier output.
+  - models.stance_inference_v2    : FinalStancePredictor — direct three-class model output
+                                    (Support / Neutral / Unclear; only labels trained in the artifact).
 """
 import importlib
 
