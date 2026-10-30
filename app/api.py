@@ -118,19 +118,26 @@ def payload(path: str, query: dict[str, list[str]]) -> tuple[int, dict]:
                      "scope_note": "These Indian policy and parliamentary sources are separate from the Canadian consultation comment corpus."}
     if path == "/api/experiments":
         p = ROOT / "data/full_corpus/experiments_v2"
-        manifest = json.loads((p / "run_manifest.json").read_text(encoding="utf-8")).get("experiments", {})
-        result = []
-        for file in sorted(p.glob("*/metrics.json")):
+        manifest_file = p / "run_manifest.json"
+        manifest = {}
+        if manifest_file.is_file():
             try:
-                name = file.parent.name
-                metrics = json.loads(file.read_text(encoding="utf-8"))
-                recorded = manifest.get(name, {})
-                matches = (recorded.get("clusters") == metrics.get("n_clusters") and
-                           recorded.get("coverage_core") == metrics.get("coverage_core"))
-                result.append({"experiment": name, "verification": "manifest fields match" if matches else "manifest mismatch or incomplete",
-                               "metrics": metrics if matches else None})
+                manifest = json.loads(manifest_file.read_text(encoding="utf-8")).get("experiments", {})
             except (OSError, json.JSONDecodeError):
-                result.append({"experiment": file.parent.name, "unavailable": "metrics file is malformed"})
+                manifest = {}
+        result = []
+        if p.is_dir():
+            for file in sorted(p.glob("*/metrics.json")):
+                try:
+                    name = file.parent.name
+                    metrics = json.loads(file.read_text(encoding="utf-8"))
+                    recorded = manifest.get(name, {})
+                    matches = (recorded.get("clusters") == metrics.get("n_clusters") and
+                               recorded.get("coverage_core") == metrics.get("coverage_core"))
+                    result.append({"experiment": name, "verification": "manifest fields match" if matches else "manifest mismatch or incomplete",
+                                   "metrics": metrics if matches else None})
+                except (OSError, json.JSONDecodeError):
+                    result.append({"experiment": file.parent.name, "unavailable": "metrics file is malformed"})
         return 200, {"kind": "saved_experiment_metrics", "human_validated": False, "data": result}
     if path == "/api/analysis/status":
         return 200, STORE.evaluation_status()
@@ -245,6 +252,8 @@ class Handler(BaseHTTPRequestHandler):
         except ArtifactUnavailable as exc:
             status, result = 503, {"error": str(exc), "component": exc.component,
                                    "status": exc.status, "problems": exc.problems}
+        except (ImportError, ModuleNotFoundError) as exc:
+            status, result = 503, {"error": f"dependency unavailable: {exc}"}
         except Exception:
             status, result = 500, {"error": "research artifact request failed"}
         self._respond(status, result)

@@ -87,10 +87,11 @@ export function PolicyCard({ post, featured = false }: PolicyCardProps) {
             {/* View Policy Action */}
             <Link
               href={`/policy/${post.slug}`}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#143454] px-3.5 py-1.5 text-[12px] font-semibold text-white shadow-2xs hover:bg-[#0e2a47] transition-colors"
+              style={{ color: "#ffffff", backgroundColor: "#143454" }}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#143454] px-3.5 py-1.5 text-[12px] font-semibold text-white shadow-2xs hover:bg-[#0e2a47] hover:text-white transition-colors"
             >
-              <span>View Policy</span>
-              <ArrowRight size={13} className="text-[#E87518]" />
+              <span style={{ color: "#ffffff" }} className="text-white">View Policy</span>
+              <ArrowRight size={13} className="text-[#E87518]" style={{ color: "#E87518" }} />
             </Link>
           </div>
         </div>

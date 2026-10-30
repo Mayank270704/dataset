@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useSyncExternalStore } from "react";
-import { Send, AlertTriangle, Lock, MessageSquare, HelpCircle, Bot, Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { Send, AlertTriangle, MessageSquare, Bot, Loader2 } from "lucide-react";
 import { postApi } from "@/lib/api";
 
 type StanceSuggestionResult = {
@@ -46,19 +46,6 @@ function isV2InferenceResponse(value: unknown): value is V2InferenceResponse {
   );
 }
 
-function subscribeToClock(callback: () => void) {
-  const timer = setInterval(callback, 30000);
-  return () => clearInterval(timer);
-}
-
-function getClientNow() {
-  return Date.now();
-}
-
-function getServerNow() {
-  return 0;
-}
-
 interface ShareOpinionFormProps {
   policySlug: string;
   policyTitle: string;
@@ -86,37 +73,9 @@ export function ShareOpinionForm({
   const [stanceLoading, setStanceLoading] = useState(false);
   const [stanceError, setStanceError] = useState("");
 
-  const currentClock = useSyncExternalStore(subscribeToClock, getClientNow, getServerNow);
-
-  let deadlineDate: Date | null = null;
-  let isTimestampMissing = false;
-  if (openedAt) {
-    const opened = new Date(openedAt);
-    if (!Number.isNaN(opened.getTime())) {
-      deadlineDate = new Date(opened.getTime() + 4 * 24 * 60 * 60 * 1000);
-    } else {
-      isTimestampMissing = true;
-    }
-  } else if (commentingDeadline) {
-    const parsed = new Date(commentingDeadline);
-    if (!Number.isNaN(parsed.getTime())) deadlineDate = parsed;
-    else isTimestampMissing = true;
-  } else {
-    isTimestampMissing = true;
-  }
-
-  const isDeadlinePassed = Boolean(deadlineDate && currentClock > 0 && currentClock >= deadlineDate.getTime());
-  const isFormDisabled = isDeadlinePassed || isTimestampMissing;
-  const formattedDeadline = deadlineDate
-    ? deadlineDate.toLocaleString("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short"
-      })
-    : null;
+  // Time limit removed: anyone can comment at anytime
+  const isDeadlinePassed = false;
+  const isFormDisabled = false;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,14 +83,6 @@ export function ShareOpinionForm({
 
     if (!trimmed) {
       setSubmissionResult({ status: "error", message: "Enter a comment before requesting a suggestion." });
-      return;
-    }
-    if (isTimestampMissing) {
-      setSubmissionResult({ status: "error", message: "Commenting is unavailable because this policy has no configured opening timestamp." });
-      return;
-    }
-    if (isDeadlinePassed) {
-      setSubmissionResult({ status: "error", message: "This PolicyLens four-day commenting window has closed." });
       return;
     }
     if (trimmed.length < 10) {
@@ -189,22 +140,16 @@ export function ShareOpinionForm({
             <span>Share Your Opinion</span>
           </h2>
           <p className="text-[13px] sm:text-[14px] text-[#4b5563] mt-0.5">
-            Comment on &ldquo;{policyTitle}&rdquo;. The four-day PolicyLens window is calculated from its configured opening timestamp and is not a government deadline.
+            Comment on &ldquo;{policyTitle}&rdquo;. Public opinion submission is open at anytime.
           </p>
         </div>
-        {formattedDeadline && (
-          <div className="flex flex-col sm:items-end gap-0.5 shrink-0">
-            <span className="text-[12px] text-[#143454] bg-[#f0f4f8] px-2.5 py-1 rounded-md border border-[#d6e0ea] font-semibold">
-              Comments close {formattedDeadline}
-            </span>
-            <span className="text-[11px] text-[#64748b]">PolicyLens portal window</span>
-          </div>
-        )}
-        {isTimestampMissing && (
-          <span className="text-[12px] text-[#6b7280] bg-[#f8fafc] px-2.5 py-1 rounded-md border border-[#e5e7eb] font-medium shrink-0 flex items-center gap-1">
-            <HelpCircle size={13} /> Opening time not configured
+        <div className="flex flex-col sm:items-end gap-0.5 shrink-0">
+          <span className="text-[12px] text-[#16834A] bg-[#f0fdf4] px-2.5 py-1 rounded-md border border-[#bbf7d0] font-semibold flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-[#16834A]" aria-hidden="true" />
+            Open for comments
           </span>
-        )}
+          <span className="text-[11px] text-[#64748b]">Public participation</span>
+        </div>
       </div>
 
       <p className="text-[12px] leading-relaxed text-[#666666]">
@@ -213,20 +158,6 @@ export function ShareOpinionForm({
       <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-[12px] leading-relaxed text-amber-950">
         Model scope: this provisional classifier was trained on historical Canadian consultation comments; its tone signal comes from a Twitter-trained model. It has not been validated for Indian policies or users and is not official or verified analysis.
       </p>
-
-      {isDeadlinePassed && (
-        <div className="rounded-lg border border-[#e5e7eb] bg-[#f9fafb] p-3.5 text-[13px] text-[#4b5563] flex items-center gap-2">
-          <Lock size={15} className="text-[#6b7280]" />
-          <span className="font-medium">The PolicyLens four-day commenting window has closed.</span>
-        </div>
-      )}
-
-      {isTimestampMissing && (
-        <div className="rounded-lg border border-[#e5e7eb] bg-[#f9fafb] p-3.5 text-[13px] text-[#4b5563] flex items-center gap-2">
-          <HelpCircle size={15} className="text-[#6b7280]" />
-          <span>Commenting is disabled until an opening timestamp is configured for this policy.</span>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">

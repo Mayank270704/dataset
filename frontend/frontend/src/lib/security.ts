@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { officialPolicies } from "@/features/feed/demo-data";
+import { officialPolicies } from "../features/feed/demo-data";
 
 /**
  * Strict slug format for policy identifiers.

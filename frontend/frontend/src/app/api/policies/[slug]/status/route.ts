@@ -78,19 +78,8 @@ export async function GET(
     }
   }
 
-  let isCommentingOpen = true;
-  if (policy.openedAt) {
-    const opened = new Date(policy.openedAt);
-    if (!Number.isNaN(opened.getTime())) {
-      const deadline = new Date(opened.getTime() + 4 * 24 * 60 * 60 * 1000);
-      isCommentingOpen = Date.now() < deadline.getTime();
-    }
-  } else if (policy.commentingDeadline) {
-    const deadline = new Date(policy.commentingDeadline);
-    if (!Number.isNaN(deadline.getTime())) {
-      isCommentingOpen = Date.now() < deadline.getTime();
-    }
-  }
+  // Time limit removed for now: anyone can comment at anytime
+  const isCommentingOpen = true;
 
   const hasAnalysis = fs.existsSync(analysisFile) || slug === BENCHMARK_PILOT_SLUG;
 

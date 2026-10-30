@@ -3,10 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, type DemandsPage, type DemandCandidate } from "@/lib/api";
 
-const TIER_BADGE: Record<string, string> = {
-  candidate: "bg-emerald-50 text-emerald-800 border-emerald-200",
-  needs_review: "bg-amber-50 text-amber-800 border-amber-200",
-};
 const FLAG_LABELS: Record<string, string> = {
   weak_cohesion: "weak cohesion",
   moderately_unstable: "moderately unstable",

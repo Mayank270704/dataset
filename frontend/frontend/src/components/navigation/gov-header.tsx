@@ -3,11 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { House, History, Bookmark, Compass, UserRound, Menu, X, ExternalLink, ShieldCheck } from "lucide-react";
+import {
+  House,
+  History,
+  Bookmark,
+  Compass,
+  UserRound,
+  Menu,
+  X,
+  ExternalLink,
+  ShieldCheck,
+  LogIn,
+  UserPlus,
+  LogOut,
+  ShieldAlert,
+} from "lucide-react";
 import { PortalIdentity } from "@/components/brand/portal-identity";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useAuth } from "@/lib/auth-context";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { label: "Home", href: "/", icon: House },
   { label: "History", href: "/history", icon: History },
   { label: "Saved", href: "/saved", icon: Bookmark },
@@ -18,13 +33,21 @@ const NAV_ITEMS = [
 export function GovHeader() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const isStaff = user && (user.role === "MODERATOR" || user.role === "ADMIN");
+
+  const navItems = [
+    ...BASE_NAV_ITEMS,
+    ...(isStaff ? [{ label: "Moderation", href: "/admin", icon: ShieldAlert }] : []),
+  ];
 
   return (
     <header className="w-full bg-white border-b border-[#e5e7eb] sticky top-0 z-40 shadow-xs">
       {/* Top Tricolour Ribbon */}
       <div className="h-[3px] w-full bg-gradient-to-r from-[#E87518] via-white to-[#16834A]" aria-hidden="true" />
 
-      {/* Top Utility Bar (Screen Reader, Accessibility, National Portal Links) */}
+      {/* Top Utility Bar (Screen Reader, Accessibility, National Portal Links & Auth Status) */}
       <div className="bg-[#f8f9fa] border-b border-[#e5e7eb] text-[11px] text-[#444444] px-4 py-1">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -66,7 +89,7 @@ export function GovHeader() {
         {/* Left: Identity Block with Provided Logo */}
         <PortalIdentity />
 
-        {/* Right: Institutional Badges (Swachh Bharat & Digital India) */}
+        {/* Right: Institutional Badges + Desktop Auth Status */}
         <div className="hidden lg:flex items-center gap-5">
           {/* Swachh Bharat Clean Line Art Badge */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb]">
@@ -110,9 +133,9 @@ export function GovHeader() {
       {/* Full-width Dark Navy Blue Navigation Bar */}
       <nav className="w-full bg-[#143454] text-white" aria-label="Primary Portal Navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          {/* Desktop Nav Links with 16–18px font size and comfortable spacing */}
-          <ul className="hidden md:flex items-center gap-2 sm:gap-4 md:gap-6 text-[16px] sm:text-[17px] font-semibold tracking-normal">
-            {NAV_ITEMS.map((item) => {
+          {/* Desktop Nav Links */}
+          <ul className="hidden md:flex items-center gap-2 sm:gap-4 md:gap-6 text-[15px] sm:text-[16px] font-semibold tracking-normal">
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
@@ -120,13 +143,13 @@ export function GovHeader() {
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className={`inline-flex items-center gap-2.5 px-4 py-3.5 transition-colors border-b-4 ${
+                    className={`inline-flex items-center gap-2 px-3.5 py-3 transition-colors border-b-4 ${
                       isActive
                         ? "bg-[#0e2a47] text-white border-[#E87518]"
                         : "text-[#f1f5f9] hover:bg-[#1a4168] hover:text-white border-transparent"
                     }`}
                   >
-                    <Icon size={18} className={isActive ? "text-[#E87518]" : "text-[#cbd5e1]"} strokeWidth={isActive ? 2.2 : 1.8} />
+                    <Icon size={17} className={isActive ? "text-[#E87518]" : "text-[#cbd5e1]"} strokeWidth={isActive ? 2.2 : 1.8} />
                     <span>{item.label}</span>
                   </Link>
                 </li>
@@ -134,12 +157,46 @@ export function GovHeader() {
             })}
           </ul>
 
-          {/* Quick External Portals Link on right */}
-          <div className="hidden md:flex items-center gap-2 py-2 text-[12px] text-[#cbd5e1]">
-            <span className="bg-[#1a4168] px-3 py-1.5 rounded text-white font-medium flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#E87518]" />
-              Official Government Portal
-            </span>
+          {/* Desktop Auth Section on right */}
+          <div className="hidden md:flex items-center gap-3 py-2 text-[13px]">
+            {user ? (
+              <div className="flex items-center gap-2.5 bg-[#0e2a47] px-3 py-1.5 rounded-lg border border-[#1e4770]">
+                <span className="text-[#f1f5f9] font-medium max-w-[140px] truncate" title={user.email}>
+                  {user.displayName}
+                </span>
+                {user.role !== "CITIZEN" && (
+                  <span className="bg-[#E87518] text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                    {user.role}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="text-[#94a3b8] hover:text-white inline-flex items-center gap-1 ml-1 text-xs"
+                  title="Sign out"
+                >
+                  <LogOut size={13} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-white hover:bg-[#1a4168] transition-colors font-medium text-[13px]"
+                >
+                  <LogIn size={14} />
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#E87518] text-white hover:bg-[#d4660f] transition-colors font-semibold text-[13px] shadow-xs"
+                >
+                  <UserPlus size={14} />
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile bar summary */}
@@ -155,7 +212,7 @@ export function GovHeader() {
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-[#1e4770] bg-[#0e2a47] px-4 py-3 space-y-1">
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
@@ -175,23 +232,44 @@ export function GovHeader() {
                 </Link>
               );
             })}
-            <div className="pt-3 mt-2 border-t border-[#1a4168] flex items-center justify-between text-[12px] text-[#94a3b8]">
-              <a
-                href="https://www.india.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white inline-flex items-center gap-1"
-              >
-                india.gov.in <ExternalLink size={11} />
-              </a>
-              <a
-                href="https://www.pib.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white inline-flex items-center gap-1"
-              >
-                pib.gov.in <ExternalLink size={11} />
-              </a>
+
+            {/* Mobile Auth Links */}
+            <div className="pt-3 mt-2 border-t border-[#1a4168]">
+              {user ? (
+                <div className="flex items-center justify-between py-2 text-sm text-[#f1f5f9]">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{user.displayName}</span>
+                    <span className="text-[11px] bg-[#143454] px-2 py-0.5 rounded border border-[#1e4770] text-[#E87518]">
+                      {user.role}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="text-red-300 hover:text-red-100 inline-flex items-center gap-1 font-medium text-xs"
+                  >
+                    <LogOut size={14} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 py-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2 rounded-lg bg-[#143454] text-white text-sm font-semibold"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2 rounded-lg bg-[#E87518] text-white text-sm font-semibold"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         )}

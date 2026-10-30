@@ -4,16 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
+    "test": "jiti src/lib/security.test.ts && jiti src/lib/auth-security.test.ts && jiti src/lib/spam-detector.test.ts && jiti src/lib/email-service.test.ts",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@node-rs/argon2": "^2.2.2",
+    "@types/pg": "^8.23.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.468.0",
     "next": "16.4.1",
+    "pg": "^8.23.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "resend": "^6.35.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
